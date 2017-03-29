@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
-        android:paddingEnd="10dp">
+        >
         <ImageView
             android:id="@+id/ivUserImageTimeline"
             android:layout_width="50dp"
@@ -17,6 +17,16 @@
             android:layout_alignParentTop="true"
             tools:src="@drawable/ic_launcher"
             android:scaleType="fitXY"
+            />
+
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="12dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/logout_icon"
             />
         <TextView
             android:id="@+id/tvToolbarTitle"
@@ -28,24 +38,20 @@
             android:layout_toEndOf="@+id/ivUserImageTimeline"
             android:layout_alignParentTop="true"
             android:layout_marginStart="@dimen/margin16"
+            android:layout_marginBottom="@dimen/margin4"
             android:textAllCaps="false"/>
-        <ImageView
-            android:id="@+id/ivAppIcon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="@dimen/margin4"
+
+        <com.astuetz.PagerSlidingTabStrip
+            android:id="@+id/pstsToolbar"
+            app:pstsShouldExpand="true"
+            app:pstsTextAllCaps="true"
+            android:layout_width="match_parent"
             android:layout_below="@id/ivUserImageTimeline"
-            app:srcCompat="@drawable/tweet_social_white"
-            />
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_alignParentEnd="true"
-            android:layout_alignTop="@id/ivAppIcon"
-            android:layout_marginTop="12dp"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:background="@drawable/logout_icon"
-            />
+            android:layout_height="48dp"
+            app:pstsDividerColor="@android:color/white"
+            app:pstsIndicatorColor="@android:color/white"
+            app:pstsUnderlineColor="@android:color/transparent"
+            android:textColor="@android:color/white"/>
+
     </RelativeLayout>
 </layout>

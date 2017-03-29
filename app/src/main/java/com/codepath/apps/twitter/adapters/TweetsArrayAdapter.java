@@ -66,7 +66,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     private static final int PROFILE_IMG_ROUND = 6;
     private static final int MEDIA_IMG_ROUND = 10;
     // Define listener member variable
-    private static OnItemClickListener listener;
+    private OnItemClickListener listener;
 
     private int mVideoResId;
 
@@ -79,7 +79,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         this.listener = listener;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.ivRetweetStatus) ImageView ivRetweetStatus;
         @BindView(R.id.tvOrigUserName) TextView tvOrigUserName;
         @BindView(R.id.ivProfileImage) ImageView ivProfileImage;
