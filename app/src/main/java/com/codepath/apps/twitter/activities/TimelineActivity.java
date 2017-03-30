@@ -1,5 +1,6 @@
 package com.codepath.apps.twitter.activities;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.AppBarLayout;
@@ -26,6 +27,8 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import com.codepath.apps.twitter.databinding.ActivityTimelineBinding;
 
+import org.parceler.Parcels;
+
 
 public class TimelineActivity extends AppCompatActivity implements ComposeFragment.OnComposeListener {
 
@@ -43,36 +46,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
 
         loadUserProfileImage();
         setTabViewPager();
-        setUpPageChangeListener();
         setToolbarScroll();
         setUpClickListeners();
         processSendIntent();
-    }
-
-    private void setUpPageChangeListener() {
-        // Attach the page change listener inside the activity
-        binding.vpTimeline.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-
-            // This method will be invoked when a new page becomes selected.
-            @Override
-            public void onPageSelected(int position) {
-                // Hide FAB on Mentions View and visible on Home View
-                binding.fabCompose.setVisibility(position == 0 ? View.VISIBLE : View.GONE);
-            }
-
-            // This method will be invoked when the current page is scrolled
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                // Noop
-            }
-
-            // Called when the scroll state changes:
-            // SCROLL_STATE_IDLE, SCROLL_STATE_DRAGGING, SCROLL_STATE_SETTLING
-            @Override
-            public void onPageScrollStateChanged(int state) {
-                // Noop
-            }
-        });
     }
 
     private void setTabViewPager() {
@@ -163,6 +139,9 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(TimelineActivity.this, ProfileActivity.class);
+                intent.putExtra("user", Parcels.wrap(User.getCurrentUser()));
+                Bundle animationBundle =
+                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
                 startActivity(intent);
 
             }

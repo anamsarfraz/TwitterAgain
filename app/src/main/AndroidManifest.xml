@@ -62,7 +62,9 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize|stateHidden" />
         <activity android:name=".activities.SplashActivity" />
-        <activity android:name=".activities.ProfileActivity"></activity>
+        <activity
+            android:name=".activities.ProfileActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

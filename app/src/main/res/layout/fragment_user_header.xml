@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <RelativeLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/ivUserProfile"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            app:srcCompat="@drawable/tweet_social"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/margin8"
+            android:layout_marginTop="-20dp"/>
+
+        <TextView
+            android:id="@+id/tvUserNameProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Unum Sarfraz"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:layout_below="@+id/ivUserProfile"
+            android:layout_marginTop="@dimen/margin16"
+            android:layout_alignStart="@+id/ivUserProfile" />
+
+        <TextView
+            android:id="@+id/tvScreenNameProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvUserNameProfile"
+            android:layout_alignStart="@id/tvUserNameProfile"
+            android:layout_marginTop="@dimen/margin8"
+            tools:text="\@unum_sarfraz"/>
+        <TextView
+            android:id="@+id/tvUserDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvScreenNameProfile"
+            android:layout_alignStart="@id/tvUserNameProfile"
+            android:layout_marginTop="@dimen/margin8"
+            tools:text="software engineer. love to learn new technologies, travel and hang out with friends and family"
+            android:textColor="@android:color/black"
+            />
+        <TextView
+            android:id="@+id/tvFollowing"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvUserDescription"
+            android:layout_alignStart="@id/tvUserNameProfile"
+            android:layout_marginTop="@dimen/margin16"
+            tools:text="22 FOLLOWING"
+            android:textColor="@android:color/black"
+            />
+        <TextView
+            android:id="@+id/tvFollowers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/tvFollowing"
+            android:layout_toEndOf="@id/tvFollowing"
+            android:layout_marginStart="@dimen/margin48"
+            tools:text="16 FOLLOWERS"
+            android:textColor="@android:color/black"
+            />
+    </RelativeLayout>
+</layout>

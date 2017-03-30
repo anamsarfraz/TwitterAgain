@@ -52,6 +52,17 @@ public class User extends BaseModel {
     @Column
     boolean verified;
 
+    @Column
+    String tagLine;
+
+    @Column
+    int followersCount;
+
+    @Column
+    int followingCount;
+
+
+
     // Getters and setters
 
 
@@ -114,13 +125,36 @@ public class User extends BaseModel {
         this.profileImageUrl = profileImageUrl;
     }
 
-
     public boolean getVerified() {
         return verified;
     }
 
     public void setVerified(boolean verified) {
         this.verified = verified;
+    }
+
+    public String getTagLine() {
+        return tagLine;
+    }
+
+    public void setTagLine(String tagLine) {
+        this.tagLine = tagLine;
+    }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
+
+    public void setFollowersCount(int followersCount) {
+        this.followersCount = followersCount;
+    }
+
+    public int getFollowingCount() {
+        return followingCount;
+    }
+
+    public void setFollowingCount(int followingCount) {
+        this.followingCount = followingCount;
     }
 
     public User() {
@@ -138,6 +172,11 @@ public class User extends BaseModel {
             this.screenName = jsonObject.getString("screen_name");
             this.profileImageUrl = jsonObject.getString("profile_image_url");
             this.verified = jsonObject.getBoolean("verified");
+            this.tagLine = jsonObject.getString("description");
+            this.followersCount = jsonObject.getInt("followers_count");
+            this.followingCount = jsonObject.getInt("friends_count");
+
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

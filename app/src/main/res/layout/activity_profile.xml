@@ -1,9 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.codepath.apps.twitter.activities.ProfileActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/mainProfileContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context="com.codepath.apps.twitter.activities.ProfileActivity">
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/abTimeline"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
 
-</android.support.constraint.ConstraintLayout>
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/tbProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed"
+                android:background="@android:color/white"
+                android:minHeight="48dp">
+
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <FrameLayout
+            android:id="@+id/flUserHeader"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_below="@id/tbProfile">
+        </FrameLayout>
+
+
+        <FrameLayout
+            android:id="@+id/flContainer"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_below="@id/flUserHeader">
+
+        </FrameLayout>
+
+
+        <!--
+                <com.astuetz.PagerSlidingTabStrip
+                    android:id="@+id/pstsProfile"
+                    app:pstsShouldExpand="true"
+                    app:pstsTextAllCaps="true"
+                    android:layout_width="match_parent"
+                    android:layout_below="@id/ldProfile1"
+                    android:layout_height="48dp"
+                    app:pstsDividerColor="@android:color/white"
+                    app:pstsIndicatorColor="@android:color/white"
+                    app:pstsUnderlineColor="@android:color/transparent"
+                    android:textColor="@android:color/white"/>
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/vpProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/pstsProfile"
+                    android:background="@android:color/white"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/fabProfile"
+                    app:srcCompat="@drawable/tweet_compose"
+                    app:fabSize="auto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/margin16"
+                    android:layout_marginBottom="@dimen/margin16"
+                    app:layout_anchor="@id/vpProfile"
+                    app:layout_anchorGravity="bottom|end"
+                    app:backgroundTint="#1da1f2"
+                    />
+        -->
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>
+
