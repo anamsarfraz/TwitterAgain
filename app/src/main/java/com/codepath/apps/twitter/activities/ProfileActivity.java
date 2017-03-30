@@ -29,6 +29,7 @@ public class ProfileActivity extends AppCompatActivity {
         User user= Parcels.unwrap(getIntent().getParcelableExtra("user"));
         setSupportActionBar(binding.tbProfile);
         getSupportActionBar().setTitle(user.getName());
+        binding.tbProfile.setTitle("Profile");
         
         // Get screen name
 

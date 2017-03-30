@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         tools:context="com.codepath.apps.twitter.activities.ProfileActivity">
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/abTimeline"
+            android:id="@+id/abProfile"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true">
@@ -28,17 +28,24 @@
             android:id="@+id/flUserHeader"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_below="@id/tbProfile">
+            android:layout_below="@+id/tbProfile"
+            >
         </FrameLayout>
-
 
         <FrameLayout
             android:id="@+id/flContainer"
             android:layout_width="match_parent"
             android:layout_height="100dp"
-            android:layout_below="@id/flUserHeader">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_below="@id/flUserHeader"
+            >
 
         </FrameLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+
+
 
 
         <!--
@@ -74,6 +81,5 @@
                     />
         -->
 
-    </android.support.design.widget.CoordinatorLayout>
 </layout>
 
