@@ -65,6 +65,7 @@
         <activity
             android:name=".activities.ProfileActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".activities.ComposeActivity" />
     </application>
 
 </manifest>

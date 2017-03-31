@@ -38,7 +38,7 @@ public class ConfirmationFragment extends DialogFragment {
         alertDialogBuilder.setPositiveButton(SAVE,  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int position) {
-                UpdateDraftDialogListener listener = (UpdateDraftDialogListener) getTargetFragment();
+                UpdateDraftDialogListener listener = (UpdateDraftDialogListener) getActivity();
                 listener.onConfirmUpdateDialog(DialogInterface.BUTTON_POSITIVE);
 
                 dialog.dismiss();
@@ -47,7 +47,7 @@ public class ConfirmationFragment extends DialogFragment {
         alertDialogBuilder.setNegativeButton(DELETE, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                UpdateDraftDialogListener listener = (UpdateDraftDialogListener) getTargetFragment();
+                UpdateDraftDialogListener listener = (UpdateDraftDialogListener) getActivity();
                 listener.onConfirmUpdateDialog(DialogInterface.BUTTON_NEGATIVE);
 
                 dialog.dismiss();

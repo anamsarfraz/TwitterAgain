@@ -44,7 +44,7 @@ import static com.codepath.apps.twitter.util.FormatUtil.buildSpan;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
-public class TweetDetailActivity extends AppCompatActivity implements ComposeFragment.OnComposeListener {
+public class TweetDetailActivity extends ComposeActivity {
 
     private static final int PROFILE_IMG_ROUND = 6;
     private static final int MEDIA_IMG_ROUND = 10;
@@ -185,12 +185,6 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
         binding.tvDetailTime.setText(DateUtil.getDateTimeInFormat(tweet.getCreatedAt(), "h:mm a"));
         binding.etReply.setText(String.format("%s%s", REPLY_TO, tweet.getUser().getName()));
 
-    }
-
-    private void showComposeDialog(String replyContent) {
-        FragmentManager fm = getSupportFragmentManager();
-        ComposeFragment composeFragment = ComposeFragment.newInstance(replyContent);
-        composeFragment.show(fm, "fragment_compose");
     }
 
     private void processIntent() {

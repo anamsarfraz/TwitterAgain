@@ -40,7 +40,7 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static android.app.Activity.RESULT_OK;
 
-public class ComposeFragment extends DialogFragment implements ConfirmationFragment.UpdateDraftDialogListener {
+public class ComposeFragment extends DialogFragment {
 
     final static String DEBUG = "DEBUG";
     private static final int MAX_COUNT = 140;
@@ -239,11 +239,7 @@ public class ComposeFragment extends DialogFragment implements ConfirmationFragm
             @Override
             public void onClick(View v) {
                 if (etCompose.getText().length() > 0 && !disableSelection) {
-                    FragmentManager fm = getFragmentManager();
-                    ConfirmationFragment confirmationFragment = ConfirmationFragment.newInstance("Save draft?");
-                    // SETS the target fragment for use later when sending results
-                    confirmationFragment.setTargetFragment(ComposeFragment.this, 300);
-                    confirmationFragment.show(fm, "fragment_confirmation");
+                    composeListener.cancelTweet();
                 } else {
                     dismiss();
                 }
@@ -255,15 +251,12 @@ public class ComposeFragment extends DialogFragment implements ConfirmationFragm
 
     }
 
-    @Override
-    public void onConfirmUpdateDialog(int position) {
+    public void handleConfirmation(int position) {
         if (position == DialogInterface.BUTTON_POSITIVE) {
             Draft.saveDraft(etCompose.getText().toString());
         }
 
         dismiss();
-
-
     }
 
     @Override
@@ -286,6 +279,7 @@ public class ComposeFragment extends DialogFragment implements ConfirmationFragm
 
     public interface OnComposeListener {
         void createTweet(Tweet tweet);
+        void cancelTweet();
 
     }
 

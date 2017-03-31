@@ -4,10 +4,7 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +14,6 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.TweetsPagerAdapter;
-import com.codepath.apps.twitter.fragments.ComposeFragment;
 import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.models.Tweet;
@@ -33,7 +29,7 @@ import org.parceler.Parcels;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
-public class TimelineActivity extends AppCompatActivity implements ComposeFragment.OnComposeListener, TweetsListFragment.OnTweetClickListener {
+public class TimelineActivity extends ComposeActivity implements TweetsListFragment.OnTweetClickListener {
 
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
@@ -122,12 +118,6 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
     @Override
     public void onStop() {
         super.onStop();
-    }
-
-    private void showComposeDialog(String shareContent) {
-        FragmentManager fm = getSupportFragmentManager();
-        ComposeFragment composeFragment = ComposeFragment.newInstance(shareContent);
-        composeFragment.show(fm, "fragment_compose");
     }
 
     private void setUpClickListeners() {
