@@ -42,6 +42,9 @@
             android:layout_below="@id/tvScreenNameProfile"
             android:layout_alignStart="@id/tvUserNameProfile"
             android:layout_marginTop="@dimen/margin8"
+            android:autoLink="all"
+            android:linksClickable="true"
+            android:textColorLink="@color/twitter_blue"
             tools:text="software engineer. love to learn new technologies, travel and hang out with friends and family"
             android:textColor="@android:color/black"
             />

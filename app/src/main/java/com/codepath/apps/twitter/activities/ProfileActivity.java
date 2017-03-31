@@ -16,6 +16,7 @@ import com.codepath.apps.twitter.fragments.UserHeaderFragment;
 import com.codepath.apps.twitter.fragments.UserTimelineFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
+import com.codepath.apps.twitter.util.OnTweetClickListener;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import com.codepath.apps.twitter.util.TwitterClient;
 
@@ -25,7 +26,7 @@ import static com.codepath.apps.twitter.R.id.pstsToolbar;
 import static com.codepath.apps.twitter.models.User.getCurrentUser;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class ProfileActivity extends AppCompatActivity implements TweetsListFragment.OnTweetClickListener {
+public class ProfileActivity extends AppCompatActivity implements OnTweetClickListener {
 
     ActivityProfileBinding binding;
     ProfilePagerAdapter adapterViewPager;
@@ -73,12 +74,18 @@ public class ProfileActivity extends AppCompatActivity implements TweetsListFrag
     }
 
     @Override
-    public void onImageClick(User user) {
-        /*
-        No op. Twitter does not allow image click from the profile. Otherwise, the user would keep
-        on clicking and coming to same page again and again
-         */
+    public void onViewClick(User user) {
+        if (user.getScreenName().equals(this.user.getScreenName())) {
+            // if the click is on the image of the same user whos profile activity is being currently
+            // viewed right now, then ignore the click
+            return;
+        }
+        // Go to user profile
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("user", Parcels.wrap(user));
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
 
     }
-
 }

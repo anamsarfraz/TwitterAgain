@@ -4,10 +4,12 @@ package com.codepath.apps.twitter.adapters;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
@@ -16,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
@@ -24,6 +27,7 @@ import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.DateUtil;
+import com.codepath.apps.twitter.util.PatternEditableBuilder;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -54,6 +58,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,6 +79,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
         void onImageClick(View imageView, int position);
+        void onTextClick(String text, boolean isSearch);
     }
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -192,6 +198,25 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         } else {
             holder.tvBody.setText(Html.fromHtml(tweet.getBody()));
         }
+
+        new PatternEditableBuilder().
+                addPattern(Pattern.compile("\\@(\\w+)"),
+                        ContextCompat.getColor(getContext(), R.color.twitter_blue),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                listener.onTextClick(text.substring(1), false);
+                            }
+                        }).
+                addPattern(Pattern.compile("\\#(\\w+)"),
+                        ContextCompat.getColor(getContext(), R.color.twitter_blue),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                //Toast.makeText(MainActivity.this, "Clicked hashtag: " + text,
+                                //        Toast.LENGTH_SHORT).show();
+                            }
+                        }).into(holder.tvBody);
         holder.tvCreatedTime.setText(DateUtil.getRelativeTimeAgo(tweet.getCreatedAt()));
 
         // set the verified image view

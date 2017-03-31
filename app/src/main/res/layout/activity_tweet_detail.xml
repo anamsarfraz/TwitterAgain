@@ -75,7 +75,7 @@
                     tools:text="Samsung is known around the world for its smartphones. But in South Korea, it's a lot more than just a tech brand http://cnn.it/2mMWwRT "
                     android:autoLink="all"
                     android:linksClickable="true"
-                    android:textColorLink="@android:color/holo_blue_light"
+                    android:textColorLink="@color/twitter_blue"
                     android:layout_margin="10dp"/>
                 <ImageView
                     android:id="@+id/ivDetailMultiMedia"

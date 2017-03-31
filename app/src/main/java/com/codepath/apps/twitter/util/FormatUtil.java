@@ -1,12 +1,16 @@
 package com.codepath.apps.twitter.util;
 
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 
 public class FormatUtil {
@@ -52,4 +56,5 @@ public class FormatUtil {
 
         return sb;
     }
+
 }

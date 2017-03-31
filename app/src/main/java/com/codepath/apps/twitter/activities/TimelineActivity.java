@@ -18,6 +18,7 @@ import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
+import com.codepath.apps.twitter.util.OnTweetClickListener;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -29,7 +30,7 @@ import org.parceler.Parcels;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
-public class TimelineActivity extends ComposeActivity implements TweetsListFragment.OnTweetClickListener {
+public class TimelineActivity extends ComposeActivity implements OnTweetClickListener {
 
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
@@ -176,7 +177,7 @@ public class TimelineActivity extends ComposeActivity implements TweetsListFragm
     }
 
     @Override
-    public void onImageClick(User user) {
+    public void onViewClick(User user) {
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("user", Parcels.wrap(user));
         Bundle animationBundle =
@@ -184,4 +185,5 @@ public class TimelineActivity extends ComposeActivity implements TweetsListFragm
         startActivity(intent, animationBundle);
 
     }
+
 }

@@ -29,7 +29,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
     private static final int RATE_LIMIT_ERR = 88;
     private static final int RETRY_LIMIT = 3;
     private static final long DELAY_MILLI = 3000;
-    TwitterClient client;
 
     Handler handler;
     final Runnable fetchRunnable = new Runnable() {
@@ -50,7 +49,6 @@ public class HomeTimelineFragment extends TweetsListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        client = TwitterApplication.getRestClient();
         handler = new Handler();
 
     }

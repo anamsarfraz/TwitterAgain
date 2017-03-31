@@ -11,8 +11,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.codepath.apps.twitter.models.Tweet;
-import com.codepath.apps.twitter.util.TwitterApplication;
-import com.codepath.apps.twitter.util.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -28,7 +26,6 @@ public class UserTimelineFragment extends TweetsListFragment {
     private static final int RATE_LIMIT_ERR = 88;
     private static final int RETRY_LIMIT = 3;
     private static final long DELAY_MILLI = 3000;
-    TwitterClient client;
 
     Handler handler;
     final Runnable fetchRunnable = new Runnable() {
@@ -49,7 +46,6 @@ public class UserTimelineFragment extends TweetsListFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        client = TwitterApplication.getRestClient();
         handler = new Handler();
 
     }

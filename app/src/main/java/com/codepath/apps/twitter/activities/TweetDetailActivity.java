@@ -1,6 +1,7 @@
 package com.codepath.apps.twitter.activities;
 
 import android.annotation.TargetApi;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.databinding.DataBindingUtil;
@@ -26,15 +27,19 @@ import com.codepath.apps.twitter.databinding.ActivityTweetDetailBinding;
 import com.codepath.apps.twitter.fragments.ComposeFragment;
 import com.codepath.apps.twitter.models.Media;
 import com.codepath.apps.twitter.models.Tweet;
+import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.DateUtil;
 import com.codepath.apps.twitter.util.FormatUtil;
+import com.codepath.apps.twitter.util.PatternEditableBuilder;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import com.codepath.apps.twitter.util.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONObject;
 import org.parceler.Parcels;
+
+import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
@@ -167,6 +172,38 @@ public class TweetDetailActivity extends ComposeActivity {
         binding.tvDetailUserName.setText(tweet.getUser().getName());
         binding.tvDetailScreenName.setText(screenName);
         binding.tvDetailBody.setText(tweet.getBody());
+        new PatternEditableBuilder().
+                addPattern(Pattern.compile("\\@(\\w+)"),
+                        ContextCompat.getColor(getContext(), R.color.twitter_blue),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                client.getUserInfo(text, new JsonHttpResponseHandler() {
+                                    public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                                        Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
+                                        intent.putExtra("user", Parcels.wrap(new User(jsonObject)));
+                                        Bundle animationBundle =
+                                                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+                                        startActivity(intent, animationBundle);
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                                        Log.e(ERROR, "Error getting user info: " + errorResponse.toString());
+
+                                    }
+                                });
+                            }
+                        }).
+                addPattern(Pattern.compile("\\#(\\w+)"),
+                        ContextCompat.getColor(getContext(), R.color.twitter_blue),
+                        new PatternEditableBuilder.SpannableClickedListener() {
+                            @Override
+                            public void onSpanClicked(String text) {
+                                //Toast.makeText(MainActivity.this, "Clicked hashtag: " + text,
+                                //        Toast.LENGTH_SHORT).show();
+                            }
+                        }).into(binding.tvDetailBody);
 
         if (tweet.isFavorited()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

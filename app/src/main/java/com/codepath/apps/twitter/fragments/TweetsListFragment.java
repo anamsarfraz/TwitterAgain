@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.TweetsArrayAdapter;
@@ -23,14 +24,23 @@ import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Connectivity;
 import com.codepath.apps.twitter.util.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.twitter.util.OnTweetClickListener;
+import com.codepath.apps.twitter.util.TwitterApplication;
+import com.codepath.apps.twitter.util.TwitterClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
 
 
 public abstract class TweetsListFragment extends Fragment {
 
     public static final String DEBUG = "DEBUG";
+    public static final String ERROR = "ERROR";
 
     List<Tweet> tweets;
     long currMaxId;
@@ -41,13 +51,13 @@ public abstract class TweetsListFragment extends Fragment {
     // Store a member variable for the listener
     private EndlessRecyclerViewScrollListener scrollListener;
     private OnTweetClickListener tweetClickListener;
-
-
+    TwitterClient client;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        client = TwitterApplication.getRestClient();
         tweets = new ArrayList<>();
         tweetsArrayAdapter = new TweetsArrayAdapter(getActivity(), tweets);
     }
@@ -116,7 +126,27 @@ public abstract class TweetsListFragment extends Fragment {
 
             @Override
             public void onImageClick(View imageView, int position) {
-                tweetClickListener.onImageClick(tweets.get(position).getUser());
+                tweetClickListener.onViewClick(tweets.get(position).getUser());
+            }
+
+            @Override
+            public void onTextClick(String text, boolean isSearch) {
+                if (isSearch) {
+                    // do search
+                } else {
+                    client.getUserInfo(text, new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                             tweetClickListener.onViewClick(new User(jsonObject));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error getting user info: " + errorResponse.toString());
+
+                        }
+                    });
+                }
+
             }
         });
     }
@@ -170,9 +200,4 @@ public abstract class TweetsListFragment extends Fragment {
 
     public abstract void fetchTimeline();
     public abstract void fetchOffline();
-
-    public interface OnTweetClickListener {
-        public void onItemClick(Tweet tweet);
-        public void onImageClick(User user);
-    }
 }
