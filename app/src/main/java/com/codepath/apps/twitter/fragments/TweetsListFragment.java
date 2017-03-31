@@ -1,6 +1,5 @@
 package com.codepath.apps.twitter.fragments;
 
-import android.app.ActivityOptions;
 import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -18,9 +17,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.codepath.apps.twitter.R;
-import com.codepath.apps.twitter.activities.ProfileActivity;
-import com.codepath.apps.twitter.activities.TimelineActivity;
-import com.codepath.apps.twitter.activities.TweetDetailActivity;
 import com.codepath.apps.twitter.adapters.TweetsArrayAdapter;
 import com.codepath.apps.twitter.databinding.FragmentTweetsListBinding;
 import com.codepath.apps.twitter.models.Tweet;
@@ -28,12 +24,8 @@ import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Connectivity;
 import com.codepath.apps.twitter.util.EndlessRecyclerViewScrollListener;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.OnClick;
 
 
 public abstract class TweetsListFragment extends Fragment {
@@ -105,7 +97,6 @@ public abstract class TweetsListFragment extends Fragment {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                binding.pbLoading.setVisibility(ProgressBar.VISIBLE);
                 loadMore();
 
             }
@@ -153,7 +144,6 @@ public abstract class TweetsListFragment extends Fragment {
         tweetsArrayAdapter.clearItems();
         scrollListener.resetState();
         hideRefreshControl();
-        binding.pbLoading.setVisibility(ProgressBar.VISIBLE);
     }
 
 
@@ -166,6 +156,7 @@ public abstract class TweetsListFragment extends Fragment {
     }
 
     public void loadMore() {
+        binding.pbLoading.setVisibility(ProgressBar.VISIBLE);
         retryCount = 0;
         if (currMaxId > 0) {
             Log.d(DEBUG, "User scrolled. Load additional tweets");
