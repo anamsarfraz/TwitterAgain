@@ -73,6 +73,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     // Define the listener interface
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
+        void onImageClick(View imageView, int position);
     }
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -110,6 +111,20 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
                     }
                 }
             });
+
+            ivProfileImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Triggers click upwards to the adapter on click
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onImageClick(itemView, position);
+                        }
+                    }
+                }
+            });
+
         }
 
         public VideoPlayerView getVvMultiMedia() {

@@ -28,6 +28,7 @@ import com.codepath.apps.twitter.models.Media;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.DateUtil;
+import com.codepath.apps.twitter.util.FormatUtil;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import com.codepath.apps.twitter.util.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -39,6 +40,7 @@ import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static com.codepath.apps.twitter.R.color.twitter_blue;
+import static com.codepath.apps.twitter.util.FormatUtil.buildSpan;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
@@ -50,8 +52,7 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
     private static final String LIKES = "LIKES";
     private static final String REPLY_TO = "Reply to ";
     private static final int MAX_COUNT = 140;
-    final StyleSpan bss = new StyleSpan(android.graphics.Typeface.BOLD); // Span to make text bold
-    final StyleSpan nss = new StyleSpan(Typeface.NORMAL); //Span to make text normal
+
     public static final String ERROR = "ERROR";
 
 
@@ -173,8 +174,8 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
             }
         }
 
-        binding.tvLikes.setText(buildSpan(Constants.format(tweet.getFavoriteCount()), LIKES));
-        binding.tvRetweets.setText(buildSpan(Constants.format(tweet.getRetweetCount()), RETWEEETS));
+        binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(tweet.getFavoriteCount()), LIKES));
+        binding.tvRetweets.setText(FormatUtil.buildSpan(FormatUtil.format(tweet.getRetweetCount()), RETWEEETS));
         if (tweet.isRetweeted()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.btnRetweetDetail.setBackground(getDrawable(R.drawable.retweet_selected));
@@ -190,19 +191,6 @@ public class TweetDetailActivity extends AppCompatActivity implements ComposeFra
         FragmentManager fm = getSupportFragmentManager();
         ComposeFragment composeFragment = ComposeFragment.newInstance(replyContent);
         composeFragment.show(fm, "fragment_compose");
-    }
-
-    private SpannableStringBuilder buildSpan(String countStr, String suffix) {
-        String formatString = String.format("%s %s", countStr, suffix);
-
-        SpannableStringBuilder sb = new SpannableStringBuilder(formatString);
-        int countLength = countStr.length();
-
-        // make count characters Bold
-        sb.setSpan(bss, 0, countLength, Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        sb.setSpan(nss, countLength, formatString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
-        return sb;
     }
 
     private void processIntent() {

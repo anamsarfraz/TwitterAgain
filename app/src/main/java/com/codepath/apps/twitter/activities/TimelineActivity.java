@@ -19,6 +19,7 @@ import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.TweetsPagerAdapter;
 import com.codepath.apps.twitter.fragments.ComposeFragment;
 import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
+import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.TwitterApplication;
@@ -29,8 +30,10 @@ import com.codepath.apps.twitter.databinding.ActivityTimelineBinding;
 
 import org.parceler.Parcels;
 
+import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class TimelineActivity extends AppCompatActivity implements ComposeFragment.OnComposeListener {
+
+public class TimelineActivity extends AppCompatActivity implements ComposeFragment.OnComposeListener, TweetsListFragment.OnTweetClickListener {
 
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
@@ -142,7 +145,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
                 intent.putExtra("user", Parcels.wrap(User.getCurrentUser()));
                 Bundle animationBundle =
                         ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-                startActivity(intent);
+                startActivity(intent, animationBundle);
 
             }
         });
@@ -169,6 +172,26 @@ public class TimelineActivity extends AppCompatActivity implements ComposeFragme
         HomeTimelineFragment homeFrag = (HomeTimelineFragment) adapterViewPager.getRegisteredFragment(0);
         homeFrag.addItem(tweet);
         homeFrag.postTweet();
+
+    }
+
+    @Override
+    public void onItemClick(Tweet tweet) {
+        Intent intent = new Intent(this, TweetDetailActivity.class);
+        intent.putExtra("tweet", Parcels.wrap(tweet));
+
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
+    }
+
+    @Override
+    public void onImageClick(User user) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("user", Parcels.wrap(user));
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
 
     }
 }

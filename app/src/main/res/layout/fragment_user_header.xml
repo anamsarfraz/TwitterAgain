@@ -52,6 +52,7 @@
             android:layout_below="@id/tvUserDescription"
             android:layout_alignStart="@id/tvUserNameProfile"
             android:layout_marginTop="@dimen/margin16"
+            android:layout_marginBottom="@dimen/margin16"
             tools:text="22 FOLLOWING"
             android:textColor="@android:color/black"
             />

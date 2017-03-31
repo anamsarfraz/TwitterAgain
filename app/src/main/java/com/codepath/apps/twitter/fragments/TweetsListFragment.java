@@ -18,10 +18,13 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.codepath.apps.twitter.R;
+import com.codepath.apps.twitter.activities.ProfileActivity;
+import com.codepath.apps.twitter.activities.TimelineActivity;
 import com.codepath.apps.twitter.activities.TweetDetailActivity;
 import com.codepath.apps.twitter.adapters.TweetsArrayAdapter;
 import com.codepath.apps.twitter.databinding.FragmentTweetsListBinding;
 import com.codepath.apps.twitter.models.Tweet;
+import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Connectivity;
 import com.codepath.apps.twitter.util.EndlessRecyclerViewScrollListener;
 
@@ -29,6 +32,8 @@ import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.OnClick;
 
 
 public abstract class TweetsListFragment extends Fragment {
@@ -43,6 +48,8 @@ public abstract class TweetsListFragment extends Fragment {
     private FragmentTweetsListBinding binding;
     // Store a member variable for the listener
     private EndlessRecyclerViewScrollListener scrollListener;
+    private OnTweetClickListener tweetClickListener;
+
 
 
     @Override
@@ -59,6 +66,7 @@ public abstract class TweetsListFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tweets_list, container, false);
 
+        tweetClickListener = (OnTweetClickListener) getActivity();
         setUpRecycleView();
         setUpRefreshControl();
         setUpScrollListeners();
@@ -112,13 +120,12 @@ public abstract class TweetsListFragment extends Fragment {
         tweetsArrayAdapter.setOnItemClickListener(new TweetsArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
+                tweetClickListener.onItemClick(tweets.get(position));
+            }
 
-                Intent intent = new Intent(getActivity(), TweetDetailActivity.class);
-                intent.putExtra("tweet", Parcels.wrap(tweets.get(position)));
-
-                Bundle animationBundle =
-                        ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-                startActivity(intent, animationBundle);
+            @Override
+            public void onImageClick(View imageView, int position) {
+                tweetClickListener.onImageClick(tweets.get(position).getUser());
             }
         });
     }
@@ -172,4 +179,9 @@ public abstract class TweetsListFragment extends Fragment {
 
     public abstract void fetchTimeline();
     public abstract void fetchOffline();
+
+    public interface OnTweetClickListener {
+        public void onItemClick(Tweet tweet);
+        public void onImageClick(User user);
+    }
 }

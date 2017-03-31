@@ -24,23 +24,30 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
-        <FrameLayout
-            android:id="@+id/flUserHeader"
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_below="@+id/tbProfile"
-            >
-        </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/flContainer"
+        <include
+            android:id="@+id/rlUserProfile"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
+            layout="@layout/user_profile_layout"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:layout_below="@id/flUserHeader"
-            >
 
-        </FrameLayout>
+            />
+
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/fabCompose"
+            app:srcCompat="@drawable/tweet_compose"
+            app:fabSize="auto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/margin16"
+            android:layout_marginBottom="@dimen/margin16"
+            app:layout_anchor="@id/rlUserProfile"
+            app:layout_anchorGravity="bottom|end"
+            app:backgroundTint="#1da1f2"
+            />
+
 
     </android.support.design.widget.CoordinatorLayout>
 

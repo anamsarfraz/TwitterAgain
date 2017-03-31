@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <FrameLayout
+            android:id="@+id/flUserHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true">
+        </FrameLayout>
+        <include
+            android:id="@+id/ldProfile1"
+            android:layout_width="fill_parent"
+            android:layout_height="10dp"
+            layout="@layout/divider_line_medium"
+            android:layout_below="@id/flUserHeader"
+            />
+        <com.astuetz.PagerSlidingTabStrip
+            android:id="@+id/pstsProfile"
+            app:pstsShouldExpand="true"
+            app:pstsTextAllCaps="true"
+            android:layout_width="match_parent"
+            android:layout_below="@id/ldProfile1"
+            android:layout_height="48dp"/>
+
+        <!--app:pstsDividerColor="@android:color/white"
+        app:pstsIndicatorColor="@android:color/white"
+        app:pstsUnderlineColor="@android:color/transparent"
+        android:textColor="@android:color/white"-->
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vpUserProfile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pstsProfile"
+            android:background="@android:color/white"/>
+    </RelativeLayout>
+</layout>
