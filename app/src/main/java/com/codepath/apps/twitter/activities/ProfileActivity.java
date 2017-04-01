@@ -86,6 +86,14 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
         startActivity(intent, animationBundle);
+    }
 
+    @Override
+    public void onHashTagClick(String hashTag) {
+        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+        intent.putExtra("query", hashTag);
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
     }
 }

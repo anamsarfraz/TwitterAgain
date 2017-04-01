@@ -132,7 +132,7 @@ public abstract class TweetsListFragment extends Fragment {
             @Override
             public void onTextClick(String text, boolean isSearch) {
                 if (isSearch) {
-                    // do search
+                    tweetClickListener.onHashTagClick(text);
                 } else {
                     client.getUserInfo(text, new JsonHttpResponseHandler() {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {

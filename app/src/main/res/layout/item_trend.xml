@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:gravity="start">
+
+    <TextView
+        android:id="@+id/tvTrendId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/darker_gray"
+        tools:text="1" />
+    <TextView
+        android:id="@+id/tvTrendName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_toEndOf="@id/tvTrendId"
+        android:layout_marginStart="@dimen/margin8"
+        tools:text="#Search" />
+    <TextView
+        android:id="@+id/tvTweetVol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/darker_gray"
+        android:layout_below="@id/tvTrendName"
+        android:layout_alignStart="@id/tvTrendName"
+        tools:text="12.1K Tweets" />
+</RelativeLayout>

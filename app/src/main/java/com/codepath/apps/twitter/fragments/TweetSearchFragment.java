@@ -1,6 +1,5 @@
 package com.codepath.apps.twitter.fragments;
 
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,7 +19,7 @@ import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
-public class UserTimelineFragment extends TweetsListFragment {
+public class TweetSearchFragment extends TweetsListFragment {
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
     private static final int RATE_LIMIT_ERR = 88;
@@ -63,25 +62,26 @@ public class UserTimelineFragment extends TweetsListFragment {
         beginNewSearch();
     }
 
-    public static UserTimelineFragment newInstance(String screenName) {
+    public static TweetSearchFragment newInstance(String query) {
 
         Bundle args = new Bundle();
 
-        UserTimelineFragment userFragment = new UserTimelineFragment();
-        args.putString("screen_name", screenName);
+        TweetSearchFragment tweetSearchFragment = new TweetSearchFragment();
+        args.putString("query", query);
 
-        userFragment.setArguments(args);
-        return userFragment;
+        tweetSearchFragment.setArguments(args);
+        return tweetSearchFragment;
     }
 
     @Override
     public void fetchTimeline() {
-        String screenName = getArguments().getString("screen_name");
-        client.getUserTimeline(screenName, currMaxId, new JsonHttpResponseHandler() {
+        String query = getArguments().getString("query");
+        client.searchTweets(query, currMaxId, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
                 hideRefreshControl();
-                Log.d("DEBUG", "timeline: " + jsonArray.toString());
+                JSONArray jsonArray= jsonObject.optJSONArray("statuses");
+                Log.d("DEBUG", "search: " + jsonArray.toString());
                 List<Tweet> newTweets = Tweet.fromJSONArray(jsonArray);
                 processFetchedTweets(newTweets);
             }
@@ -89,7 +89,7 @@ public class UserTimelineFragment extends TweetsListFragment {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 hideRefreshControl();
-                Log.e(ERROR, "Error fetching timeline: " + (errorResponse == null ? "Unknown error" : errorResponse.toString()));
+                Log.e(ERROR, "Error fetching tweets from search: " + (errorResponse == null ? "Uknown error" : errorResponse.toString()));
                 int errorCode = errorResponse.optJSONArray("errors").optJSONObject(0).optInt("code", 0);
 
                 if (errorCode == RATE_LIMIT_ERR && retryCount < RETRY_LIMIT) {

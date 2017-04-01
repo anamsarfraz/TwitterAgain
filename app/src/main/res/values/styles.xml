@@ -17,6 +17,7 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="homeAsUpIndicator">@drawable/back_arrow</item>
     </style>
 
     <style name="ComposeDialog" parent="Theme.AppCompat.Dialog" >

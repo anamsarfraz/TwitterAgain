@@ -7,7 +7,10 @@ import android.content.Context;
 
 import com.codepath.oauth.OAuthBaseClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
+import static com.codepath.apps.twitter.models.User_Table.screenName;
 
 /*
  * 
@@ -89,4 +92,23 @@ public class TwitterClient extends OAuthBaseClient {
         getClient().get(apiUrl, params, handler);
     }
 
+    public void getTrends(AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("trends/place.json");
+        RequestParams params = new RequestParams();
+        params.put("id", 1);
+
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void searchTweets(String query, long maxId, AsyncHttpResponseHandler handler) {
+		String apiUrl = getApiUrl("search/tweets.json");
+		RequestParams params = new RequestParams();
+		params.put("count", Constants.MAX_TWEET_COUNT);
+		params.put("q", query);
+		if (maxId > 0) {
+			params.put("max_id", maxId);
+		}
+
+		getClient().get(apiUrl, params, handler);
+    }
 }

@@ -108,8 +108,7 @@ public class UserHeaderFragment extends Fragment {
                         new PatternEditableBuilder.SpannableClickedListener() {
                             @Override
                             public void onSpanClicked(String text) {
-                                //Toast.makeText(MainActivity.this, "Clicked hashtag: " + text,
-                                //        Toast.LENGTH_SHORT).show();
+                                tweetClickListener.onHashTagClick(text);
                             }
                         }).into(binding.tvUserDescription);
         binding.tvFollowers.setText(FormatUtil.buildSpan(FormatUtil.format(user.getFollowersCount()), FOLLOWERS));

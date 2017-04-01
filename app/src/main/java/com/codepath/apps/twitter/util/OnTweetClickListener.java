@@ -7,4 +7,5 @@ import com.codepath.apps.twitter.models.User;
 public interface OnTweetClickListener {
     public void onItemClick(Tweet tweet);
     public void onViewClick(User user);
+    public void onHashTagClick(String hashTag);
 }

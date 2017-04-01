@@ -173,13 +173,17 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
     public void onBindViewHolder(final ViewHolder holder, int position) {
         // Get the data model based on position
         Tweet tweet = mTweets.get(position);
-        boolean isRetweet = false;
+        String origUserName;
 
         // Check retweet_default status
         if (tweet.getRetweetedStatus() != null) {
+            origUserName = tweet.getUser().getName();
+            if (origUserName.equals(User.getCurrentUser().getName())) {
+                origUserName = Constants.YOU;
+            }
             holder.ivRetweetStatus.setVisibility(View.VISIBLE);
             holder.tvOrigUserName.setVisibility(View.VISIBLE);
-            holder.tvOrigUserName.setText(String.format("%s Retweeted", tweet.getUser().getName()));
+            holder.tvOrigUserName.setText(String.format("%s Retweeted", origUserName));
             tweet = tweet.getRetweetedStatus();
         } else {
             holder.ivRetweetStatus.setVisibility(View.GONE);
@@ -213,8 +217,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
                         new PatternEditableBuilder.SpannableClickedListener() {
                             @Override
                             public void onSpanClicked(String text) {
-                                //Toast.makeText(MainActivity.this, "Clicked hashtag: " + text,
-                                //        Toast.LENGTH_SHORT).show();
+                                listener.onTextClick(text, true);
                             }
                         }).into(holder.tvBody);
         holder.tvCreatedTime.setText(DateUtil.getRelativeTimeAgo(tweet.getCreatedAt()));

@@ -11,4 +11,5 @@ public class Constants {
     public static final int MAX_TWEET_COUNT = 25;
 
 
+    public static final String YOU = "You";
 }

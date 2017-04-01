@@ -27,6 +27,7 @@ import com.codepath.apps.twitter.databinding.ActivityTimelineBinding;
 
 import org.parceler.Parcels;
 
+import static com.codepath.apps.twitter.R.string.tweet;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
@@ -141,10 +142,14 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
             }
         });
 
-        binding.tbViews.btnLogout.setOnClickListener(new View.OnClickListener() {
+        binding.tbViews.btnSearch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                logout();
+                Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+
+                Bundle animationBundle =
+                        ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+                startActivity(intent, animationBundle);
             }
         });
 
@@ -184,6 +189,15 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
         startActivity(intent, animationBundle);
 
+    }
+
+    @Override
+    public void onHashTagClick(String hashTag) {
+        Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+        intent.putExtra("query", hashTag);
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
     }
 
 }
