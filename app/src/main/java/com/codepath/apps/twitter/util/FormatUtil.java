@@ -1,16 +1,13 @@
 package com.codepath.apps.twitter.util;
 
-import android.graphics.Color;
 import android.graphics.Typeface;
+import android.icu.text.DecimalFormat;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.style.StyleSpan;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.NavigableMap;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 
 
 public class FormatUtil {
@@ -34,7 +31,11 @@ public class FormatUtil {
         if (value == Long.MIN_VALUE) return format(Long.MIN_VALUE + 1);
         if (value < 0) return "-" + format(-value);
         if (value < 1000) return Long.toString(value); //deal with easy case
+        if (value < 10000 && android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            DecimalFormat decimalFormat = new DecimalFormat("#,###");
+            return decimalFormat.format(value);
 
+        }
         TreeMap.Entry<Long, String> e = suffixes.floorEntry(value);
         Long divideBy = e.getKey();
         String suffix = e.getValue();

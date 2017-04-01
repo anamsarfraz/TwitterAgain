@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.DateUtil;
+import com.codepath.apps.twitter.util.FormatUtil;
 import com.codepath.apps.twitter.util.PatternEditableBuilder;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -96,6 +98,10 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         @BindView(R.id.tvBody) TextView tvBody;
         @BindView(R.id.ivMultiMedia) ImageView ivMultiMedia;
         @BindView(R.id.vvMultiMedia)VideoPlayerView vvMultiMedia;
+        @BindView(R.id.tvRetweet) TextView tvRetweet;
+        @BindView(R.id.btnRetweet) Button btnRetweet;
+        @BindView(R.id.tvLike) TextView tvLike;
+        @BindView(R.id.btnLike) Button btnLike;
 
         public ViewHolder(final View itemView) {
             // Stores the itemView in a public final member variable that can be used
@@ -228,6 +234,19 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
             holder.tvUserName.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null);
         } else {
             holder.tvUserName.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+        }
+
+        holder.tvRetweet.setText(FormatUtil.format(tweet.getRetweetCount()));
+        if (tweet.isRetweeted()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.btnRetweet.setBackground(mContext.getDrawable(R.drawable.retweet_selected));
+            }
+        }
+        holder.tvLike.setText(FormatUtil.format(tweet.getFavoriteCount()));
+        if (tweet.isFavorited()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.btnLike.setBackground(mContext.getDrawable(R.drawable.like_selected));
+            }
         }
 
         // find the image views

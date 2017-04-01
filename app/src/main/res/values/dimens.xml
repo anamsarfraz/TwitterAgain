@@ -11,5 +11,8 @@
     <dimen name="padding4">4dp</dimen>
     <dimen name="margin100">100dp</dimen>
     <dimen name="padding10">10dp</dimen>
+    <dimen name="margin24">24dp</dimen>
+    <dimen name="margin60">60dp</dimen>
+    <dimen name="margin64">64dp</dimen>
 
 </resources>

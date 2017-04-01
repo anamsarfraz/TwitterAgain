@@ -143,7 +143,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_below="@+id/ld_detail2"
-                    android:layout_marginStart="@dimen/margin48"
+                    android:layout_marginStart="@dimen/margin64"
                     android:layout_marginBottom="@dimen/margin8"
                     android:background="@drawable/reply_default"/>
                 <Button
@@ -151,16 +151,25 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_below="@+id/ld_detail2"
-                    android:layout_centerHorizontal="true"
+                    android:layout_toEndOf="@id/btnReplyDetail"
+                    android:layout_marginStart="@dimen/margin64"
                     android:background="@drawable/retweet_default"/>
                 <Button
                     android:id="@+id/btnLikeDetail"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_below="@+id/ld_detail2"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginEnd="@dimen/margin48"
+                    android:layout_toEndOf="@id/btnRetweetDetail"
+                    android:layout_marginStart="@dimen/margin64"
                     android:background="@drawable/like_default"/>
+                <Button
+                    android:id="@+id/btnMessage"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_below="@id/ld_detail2"
+                    android:layout_toEndOf="@id/btnLikeDetail"
+                    android:layout_marginStart="@dimen/margin64"
+                    android:background="@drawable/message_default"/>
                 <include
                     android:id="@+id/ld_detail3"
                     android:layout_width="fill_parent"

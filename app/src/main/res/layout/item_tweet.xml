@@ -92,10 +92,60 @@
         android:id="@+id/vvMultiMedia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/tvBody"
-        android:layout_below="@+id/tvBody"
-        android:layout_marginEnd="@dimen/margin4"
-        android:layout_marginTop="@dimen/margin8" />
+        android:layout_alignTop="@+id/ivMultiMedia"
+        android:layout_alignStart="@+id/ivMultiMedia" />
+    <Button
+        android:id="@+id/btnReply"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/ivMultiMedia"
+        android:layout_alignStart="@id/ivMultiMedia"
+        android:layout_marginTop="@dimen/margin8"
+        android:background="@drawable/reply_default"/>
+    <Button
+        android:id="@+id/btnRetweet"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/ivMultiMedia"
+        android:layout_alignTop="@id/btnReply"
+        android:layout_toEndOf="@id/btnReply"
+        android:layout_marginStart="@dimen/margin64"
+        android:background="@drawable/retweet_default"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvRetweet"
+        tools:text="48"
+        android:layout_marginStart="@dimen/margin4"
+        android:layout_alignBaseline="@id/btnRetweet"
+        android:layout_toEndOf="@id/btnRetweet"
+        android:textColor="@color/twitter_grey_dark"/>
+    <Button
+        android:id="@+id/btnLike"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_below="@id/ivMultiMedia"
+        android:layout_alignTop="@id/btnRetweet"
+        android:layout_toEndOf="@id/btnRetweet"
+        android:layout_marginStart="@dimen/margin64"
+        android:background="@drawable/like_default"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvLike"
+        tools:text="48"
+        android:layout_marginStart="@dimen/margin4"
+        android:layout_alignBaseline="@id/btnLike"
+        android:layout_toEndOf="@id/btnLike"
+        android:textColor="@color/twitter_grey_dark"/>
+    <Button
+        android:id="@+id/btnMessage"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_below="@id/ivMultiMedia"
+        android:layout_alignTop="@id/btnLike"
+        android:layout_toEndOf="@id/btnLike"
+        android:layout_marginStart="@dimen/margin64"
+        android:background="@drawable/message_default"/>
 
 </RelativeLayout>

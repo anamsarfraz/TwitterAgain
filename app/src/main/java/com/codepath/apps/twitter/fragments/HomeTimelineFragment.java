@@ -79,10 +79,13 @@ public class HomeTimelineFragment extends TweetsListFragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                int errorCode = 0;
                 hideRefreshControl();
                 Log.e(ERROR, "Error fetching timeline: " + (errorResponse == null ? "Uknown error" : errorResponse.toString()));
-                int errorCode = errorResponse.optJSONArray("errors").optJSONObject(0).optInt("code", 0);
 
+                if (errorResponse != null) {
+                    errorCode = errorResponse.optJSONArray("errors").optJSONObject(0).optInt("code", 0);
+                }
                 if (errorCode == RATE_LIMIT_ERR && retryCount < RETRY_LIMIT) {
                     retryCount++;
                     handler.postDelayed(fetchRunnable, DELAY_MILLI);
