@@ -82,6 +82,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         void onItemClick(View itemView, int position);
         void onImageClick(View imageView, int position);
         void onTextClick(String text, boolean isSearch);
+        void onReplyClick(View replyBtn, int position);
     }
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -98,6 +99,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         @BindView(R.id.tvBody) TextView tvBody;
         @BindView(R.id.ivMultiMedia) ImageView ivMultiMedia;
         @BindView(R.id.vvMultiMedia)VideoPlayerView vvMultiMedia;
+        @BindView(R.id.btnReply) Button btnReply;
         @BindView(R.id.tvRetweet) TextView tvRetweet;
         @BindView(R.id.btnRetweet) Button btnRetweet;
         @BindView(R.id.tvLike) TextView tvLike;
@@ -137,6 +139,17 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
                 }
             });
 
+            btnReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onReplyClick(itemView, position);
+                        }
+                    }
+                }
+            });
         }
 
         public VideoPlayerView getVvMultiMedia() {

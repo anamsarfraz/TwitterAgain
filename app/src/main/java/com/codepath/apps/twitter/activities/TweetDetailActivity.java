@@ -2,6 +2,7 @@ package com.codepath.apps.twitter.activities;
 
 import android.annotation.TargetApi;
 import android.app.ActivityOptions;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.databinding.DataBindingUtil;
@@ -19,6 +20,8 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -44,6 +47,7 @@ import java.util.regex.Pattern;
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.codepath.apps.twitter.R.color.twitter_blue;
 import static com.codepath.apps.twitter.util.FormatUtil.buildSpan;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
@@ -63,8 +67,11 @@ public class TweetDetailActivity extends ComposeActivity {
 
     private ActivityTweetDetailBinding binding;
     Tweet tweet;
+    Tweet retweetedStatus;
     String screenName;
+    boolean isReply;
     TwitterClient client;
+    private String replyStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,19 +96,36 @@ public class TweetDetailActivity extends ComposeActivity {
         binding.btnExpand.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showComposeDialog(binding.etReply.getText().toString());
+                 int remainingCount = Integer.parseInt(binding.tvCharCountDetail.getText().toString());
+                if (remainingCount == MAX_COUNT) {
+                    showComposeDialog(screenName);
+                } else {
+                    showComposeDialog(binding.etReply.getText().toString());
+                }
+
+            }
+        });
+
+        binding.btnReplyDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int remainingCount = Integer.parseInt(binding.tvCharCountDetail.getText().toString());
+                if (remainingCount == MAX_COUNT) {
+                    showComposeDialog(screenName);
+                } else {
+                    showComposeDialog(binding.etReply.getText().toString());
+                }
+
             }
         });
 
         binding.etReply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                binding.etReply.setText(screenName);
-                binding.etReply.setSelection(screenName.length());
-                binding.etReply.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.black));
-                binding.tvCharCountDetail.setText(String.format("%d", MAX_COUNT-screenName.length()));
-                binding.tvCharCountDetail.setVisibility(View.VISIBLE);
-                binding.btnRTextDetail.setVisibility(View.VISIBLE);
+                if (!isReply) {
+                    setUpReplyText();
+                }
+
                 binding.etReply.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -129,7 +153,7 @@ public class TweetDetailActivity extends ComposeActivity {
                     public void afterTextChanged(Editable s) {
                         if (binding.etReply.getText().length() == 0) {
                             binding.etReply.removeTextChangedListener(this);
-                            binding.etReply.setText(String.format("%s%s", REPLY_TO, tweet.getUser().getName()));
+                            binding.etReply.setText(replyStr);
                             binding.etReply.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
                             binding.etReply.addTextChangedListener(this);
                         }
@@ -142,17 +166,31 @@ public class TweetDetailActivity extends ComposeActivity {
         });
     }
 
+    private void setUpReplyText() {
+        binding.etReply.setText(screenName);
+        binding.etReply.setSelection(screenName.length());
+        binding.etReply.setTextColor(ContextCompat.getColor(getApplicationContext(), android.R.color.black));
+        binding.tvCharCountDetail.setText(String.format("%d", MAX_COUNT-screenName.length()));
+        binding.tvCharCountDetail.setVisibility(View.VISIBLE);
+        binding.btnRTextDetail.setVisibility(View.VISIBLE);
+
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+
+    }
+
     private void populateViews() {
+        Tweet tweetDetail = retweetedStatus == null ? tweet : retweetedStatus;
+        String origUserName;
         // Load images
         Glide.with(this)
-                .load(tweet.getUser().getProfileImageUrl())
+                .load(tweetDetail.getUser().getProfileImageUrl())
                 .bitmapTransform(new RoundedCornersTransformation(this, PROFILE_IMG_ROUND, 0))
                 .placeholder(R.drawable.tweet_social)
                 .crossFade()
                 .into(binding.ivProfileDetailImage);
 
         // Check if multimedia image is available
-        Media media = tweet.getMedia();
+        Media media = tweetDetail.getMedia();
         if (media != null) {
             binding.ivDetailMultiMedia.setVisibility(View.VISIBLE);
             Glide
@@ -169,9 +207,19 @@ public class TweetDetailActivity extends ComposeActivity {
             binding.ivDetailMultiMedia.setVisibility(View.GONE);
         }
 
-        binding.tvDetailUserName.setText(tweet.getUser().getName());
-        binding.tvDetailScreenName.setText(screenName);
-        binding.tvDetailBody.setText(tweet.getBody());
+        if (retweetedStatus != null) {
+            binding.ivRetweetStatusDetail.setVisibility(View.VISIBLE);
+            binding.tvOrigUserNameDetail.setVisibility(View.VISIBLE);
+            origUserName = tweet.getUser().getName();
+            if (origUserName.equals(User.getCurrentUser().getName())) {
+                origUserName = Constants.YOU;
+            }
+            binding.tvOrigUserNameDetail.setText(String.format("%s Retweeted", origUserName));
+        }
+
+        binding.tvDetailUserName.setText(tweetDetail.getUser().getName());
+        binding.tvDetailScreenName.setText(String.format("%s%s", Constants.ATRATE, tweetDetail.getUser().getScreenName()));
+        binding.tvDetailBody.setText(tweetDetail.getBody());
         new PatternEditableBuilder().
                 addPattern(Pattern.compile("\\@(\\w+)"),
                         ContextCompat.getColor(getContext(), R.color.twitter_blue),
@@ -208,29 +256,54 @@ public class TweetDetailActivity extends ComposeActivity {
                             }
                         }).into(binding.tvDetailBody);
 
-        if (tweet.isFavorited()) {
+        if (tweetDetail.isFavorited()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.btnLikeDetail.setBackground(getDrawable(R.drawable.like_selected));
             }
         }
 
-        binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(tweet.getFavoriteCount()), LIKES));
-        binding.tvRetweets.setText(FormatUtil.buildSpan(FormatUtil.format(tweet.getRetweetCount()), RETWEEETS));
-        if (tweet.isRetweeted()) {
+        binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(tweetDetail.getFavoriteCount()), LIKES));
+        binding.tvRetweets.setText(FormatUtil.buildSpan(FormatUtil.format(tweetDetail.getRetweetCount()), RETWEEETS));
+        if (tweetDetail.isRetweeted()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 binding.btnRetweetDetail.setBackground(getDrawable(R.drawable.retweet_selected));
             }
         }
-        binding.tvDetailDate.setText(DateUtil.getDateTimeInFormat(tweet.getCreatedAt(), "dd MMM yy"));
-        binding.tvDetailTime.setText(DateUtil.getDateTimeInFormat(tweet.getCreatedAt(), "h:mm a"));
-        binding.etReply.setText(String.format("%s%s", REPLY_TO, tweet.getUser().getName()));
+        binding.tvDetailDate.setText(DateUtil.getDateTimeInFormat(tweetDetail.getCreatedAt(), "dd MMM yy"));
+        binding.tvDetailTime.setText(DateUtil.getDateTimeInFormat(tweetDetail.getCreatedAt(), "h:mm a"));
+        binding.tvCharCountDetail.setText(String.format("%d", MAX_COUNT));
 
+        if (isReply) {
+            setUpReplyText();
+        } else {
+            binding.etReply.setText(replyStr);
+        }
     }
 
     private void processIntent() {
         Intent intent = getIntent();
         tweet = Parcels.unwrap(intent.getParcelableExtra("tweet"));
-        screenName = String.format("%s%s ", Constants.ATRATE, tweet.getUser().getScreenName());
+        retweetedStatus = tweet.getRetweetedStatus();
+        StringBuilder screenNamePH = new StringBuilder();
+        if (retweetedStatus != null) {
+            screenNamePH.append(
+                    String.format("%s%s ", Constants.ATRATE, retweetedStatus.getUser().getScreenName()));
+        }
+
+        screenNamePH.append(String.format("%s%s ", Constants.ATRATE, tweet.getUser().getScreenName()));
+        screenName = screenNamePH.toString();
+
+        StringBuilder replyPlaceHolder = new StringBuilder();
+        replyPlaceHolder.append(REPLY_TO);
+        if (retweetedStatus != null) {
+            replyPlaceHolder.append(String.format("%s and ", retweetedStatus.getUser().getName()));
+        }
+        replyPlaceHolder.append(tweet.getUser().getName());
+        replyStr = replyPlaceHolder.toString();
+
+        isReply = intent.getBooleanExtra("is_reply", false);
+
+
     }
 
     @Override

@@ -36,15 +36,33 @@
                 </android.support.design.widget.AppBarLayout>
                 <ImageView
                     android:id="@+id/ivProfileDetailImage"
-                    android:padding="10dp"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:layout_alignParentStart="true"
-                    android:layout_margin="10dp"
-                    android:layout_below="@id/abDetail"
+                    android:layout_margin="@dimen/margin10"
+                    android:layout_below="@+id/ivRetweetStatusDetail"
+                    android:adjustViewBounds="true"
                     android:scaleType="fitXY"
                     app:srcCompat="@drawable/ic_launcher">
                 </ImageView>
+                <ImageView
+                    android:id="@+id/ivRetweetStatusDetail"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginTop="@dimen/margin16"
+                    android:layout_marginBottom="@dimen/margin8"
+                    app:srcCompat="@drawable/retweet_default"
+                    android:layout_below="@id/abDetail"
+                    android:layout_alignEnd="@id/ivProfileDetailImage"
+                    android:visibility="gone"/>
+                <TextView
+                    android:id="@+id/tvOrigUserNameDetail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/tvDetailUserName"
+                    android:layout_alignBottom="@+id/ivRetweetStatusDetail"
+                    tools:text="Ingrid Maddison Retweeted"
+                    android:visibility="gone"/>
                 <TextView
                     android:id="@+id/tvDetailUserName"
                     android:layout_width="wrap_content"
@@ -163,7 +181,7 @@
                     android:layout_marginStart="@dimen/margin64"
                     android:background="@drawable/like_default"/>
                 <Button
-                    android:id="@+id/btnMessage"
+                    android:id="@+id/btnMessageDetail"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_below="@id/ld_detail2"

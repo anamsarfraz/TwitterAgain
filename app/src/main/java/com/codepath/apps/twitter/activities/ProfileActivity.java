@@ -96,4 +96,15 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
         startActivity(intent, animationBundle);
     }
+
+    @Override
+    public void onReplyClick(Tweet tweet) {
+        Intent intent = new Intent(this, TweetDetailActivity.class);
+        intent.putExtra("tweet", Parcels.wrap(tweet));
+        intent.putExtra("is_reply", true);
+
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
+    }
 }

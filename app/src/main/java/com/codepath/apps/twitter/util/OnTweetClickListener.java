@@ -8,4 +8,5 @@ public interface OnTweetClickListener {
     public void onItemClick(Tweet tweet);
     public void onViewClick(User user);
     public void onHashTagClick(String hashTag);
+    public void onReplyClick(Tweet tweet);
 }

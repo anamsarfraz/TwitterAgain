@@ -148,6 +148,11 @@ public abstract class TweetsListFragment extends Fragment {
                 }
 
             }
+
+            @Override
+            public void onReplyClick(View replyBtn, int position) {
+                tweetClickListener.onReplyClick(tweets.get(position));
+            }
         });
     }
 
