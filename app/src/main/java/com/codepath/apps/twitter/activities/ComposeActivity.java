@@ -25,8 +25,8 @@ public abstract class ComposeActivity extends AppCompatActivity implements Compo
         fm = getSupportFragmentManager();
     }
 
-    public void showComposeDialog(String shareContent, boolean isMessage) {
-        composeFragment = ComposeFragment.newInstance(shareContent, isMessage);
+    public void showComposeDialog(String shareContent, boolean isMessage, String recipient) {
+        composeFragment = ComposeFragment.newInstance(shareContent, isMessage, recipient);
         composeFragment.show(fm, "fragment_compose");
     }
 

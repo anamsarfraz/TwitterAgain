@@ -1,7 +1,9 @@
 package com.codepath.apps.twitter.adapters;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +14,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
-import com.codepath.apps.twitter.models.Follow;
 import com.codepath.apps.twitter.models.Message;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Constants;
@@ -23,21 +24,19 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static android.R.id.message;
 
 
-public class FollowArrayAdapter extends RecyclerView.Adapter<FollowArrayAdapter.ViewHolder> {
+public class UserArrayAdapter extends RecyclerView.Adapter<UserArrayAdapter.ViewHolder> {
 
 
-    private static final int PROFILE_IMG_ROUND = 6;
     // Define listener member variable
     private OnItemClickListener listener;
 
     // Define the listener interface
     public interface OnItemClickListener {
-        void onImageClick(View itemView, int position);
+        void onItemClick(View itemView, int position);
     }
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -45,11 +44,10 @@ public class FollowArrayAdapter extends RecyclerView.Adapter<FollowArrayAdapter.
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.ivProfileImageFollow) ImageView ivProfileImageFollow;
-        @BindView(R.id.tvUserNameFollow) TextView tvUserNameFollow;
-        @BindView(R.id.tvScreenNameFollow) TextView tvScreenNameFollow;
-        @BindView(R.id.tvTaglineFollow) TextView tvTaglineFollow;
-        @BindView(R.id.ivFollow) ImageView ivFollow;
+        @BindView(R.id.ivProfileImageUser) ImageView ivProfileImageUser;
+        @BindView(R.id.tvNameUser) TextView tvNameUser;
+        @BindView(R.id.tvScreenNameUser) TextView tvScreenNameUser;
+
 
         public ViewHolder(final View itemView) {
             // Stores the itemView in a public final member variable that can be used
@@ -59,14 +57,14 @@ public class FollowArrayAdapter extends RecyclerView.Adapter<FollowArrayAdapter.
             ButterKnife.bind(this, itemView);
 
 
-            ivFollow.setOnClickListener(new View.OnClickListener() {
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // Triggers click upwards to the adapter on click
                     if (listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            listener.onImageClick(itemView, position);
+                            listener.onItemClick(itemView, position);
                         }
                     }
                 }
@@ -75,14 +73,14 @@ public class FollowArrayAdapter extends RecyclerView.Adapter<FollowArrayAdapter.
 
     }
 
-    // Store a member variable for the Messages
-    private List<Follow> mFollows;
+    // Store a member variable for the users
+    private List<User> mUsers;
     // Store the context for easy access
     private Context mContext;
 
-    // Pass in the Message array into the constructor
-    public FollowArrayAdapter(Context context, List<Follow> follows) {
-        mFollows = follows;
+    // Pass in the user array into the constructor
+    public UserArrayAdapter(Context context, List<User> users) {
+        mUsers = users;
         mContext = context;
     }
 
@@ -93,64 +91,57 @@ public class FollowArrayAdapter extends RecyclerView.Adapter<FollowArrayAdapter.
 
 
     @Override
-    public FollowArrayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public UserArrayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         // Inflate the custom Trend view layout
-        View trendView = inflater.inflate(R.layout.item_follow, parent, false);
+        View trendView = inflater.inflate(R.layout.item_user, parent, false);
 
         // Return a new holder instance
         ViewHolder viewHolder = new ViewHolder(trendView);
         return viewHolder;
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        // Get the data model based on position
-        Follow follow = mFollows.get(position);
+        User user = mUsers.get(position);
 
-        ImageView imgView = holder.ivProfileImageFollow;
+        ImageView imgView = holder.ivProfileImageUser;
         Glide.with(mContext)
-                .load(follow.getProfileImageUrl())
-                .bitmapTransform(new RoundedCornersTransformation(mContext, PROFILE_IMG_ROUND, 0))
+                .load(user.getProfileImageUrl())
+                .bitmapTransform(new CropCircleTransformation(mContext))
                 .placeholder(R.drawable.tweet_social)
                 .crossFade()
                 .into(imgView);
 
-        holder.tvUserNameFollow.setText(follow.getName());
-        holder.tvScreenNameFollow.setText(
-                String.format("%s%s", Constants.ATRATE, follow.getScreenName()));
-
-        if (follow.getTagline().length() > 0 ) {
-            holder.tvTaglineFollow.setText(follow.getTagline());
-            holder.tvTaglineFollow.setVisibility(View.VISIBLE);
+        holder.tvNameUser.setText(user.getName());
+        // set the verified image view
+        Drawable drawable =  mContext.getDrawable(R.drawable.verified_user);
+        if (user.getVerified()) {
+            holder.tvNameUser.setCompoundDrawablesRelativeWithIntrinsicBounds(null, null, drawable, null);
         } else {
-            holder.tvTaglineFollow.setVisibility(View.GONE);
+            holder.tvNameUser.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
 
-
-        holder.ivFollow.setImageResource(0);
-        holder.ivFollow.setVisibility(User.getCurrentUser().getUid() == follow.getUid() ? View.GONE : View.VISIBLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            holder.ivFollow.setBackground(mContext.getDrawable(follow.isFollowing() ? R.drawable.ic_following : R.drawable.ic_follow));
-        }
-
+        holder.tvScreenNameUser.setText(
+                String.format("%s%s", Constants.ATRATE, user.getScreenName()));
 
     }
 
     @Override
     public int getItemCount() {
-        return mFollows.size();
+        return mUsers.size();
     }
 
-    public Follow getItem(int position) {
-        return mFollows.get(position);
+    public User getItem(int position) {
+        return mUsers.get(position);
     }
 
     public void clearItems() {
-        int currSize = mFollows.size();
-        mFollows.clear();
+        int currSize = mUsers.size();
+        mUsers.clear();
         notifyItemRangeRemoved(0, currSize);
     }
 

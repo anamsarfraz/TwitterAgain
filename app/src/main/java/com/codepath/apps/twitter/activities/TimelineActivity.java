@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.TweetsPagerAdapter;
 import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
+import com.codepath.apps.twitter.fragments.MessagesFragment;
 import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
@@ -38,8 +39,10 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
     private final int REQUEST_CODE = 20;
+    private final int SEARCH_CODE = 30;
     TweetsPagerAdapter adapterViewPager;
     ActivityTimelineBinding binding;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,7 +136,7 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
                 String urlOfPage = intent.getStringExtra(Intent.EXTRA_TEXT);
 
                 String sharedContent = String.format("%s\n%s", titleOfPage, urlOfPage);
-                showComposeDialog(sharedContent, false);
+                showComposeDialog(sharedContent, false, null);
             }
         }
     }
@@ -150,9 +153,13 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
             @Override
             public void onClick(View v) {
                 if (binding.vpTimeline.getCurrentItem() == 2) {
-                    showComposeDialog(null, true);
+                    Intent intent = new Intent(getApplicationContext(), SearchActivity.class);
+                    intent.putExtra("user_search", true);
+                    Bundle animationBundle =
+                            ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+                    startActivityForResult(intent, SEARCH_CODE, animationBundle);
                 } else {
-                    showComposeDialog(null, false);
+                    showComposeDialog(null, false, null);
                 }
 
             }
@@ -196,7 +203,12 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
         HomeTimelineFragment homeFrag = (HomeTimelineFragment) adapterViewPager.getRegisteredFragment(0);
         homeFrag.addItem(tweet);
         homeFrag.postTweet();
+    }
 
+    @Override
+    public void createMessage(String message) {
+        MessagesFragment messagesFragment = (MessagesFragment) adapterViewPager.getRegisteredFragment(2);
+        messagesFragment.sendMessage(user, message);
     }
 
     @Override
@@ -251,6 +263,9 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
             HomeTimelineFragment homeFrag = (HomeTimelineFragment) adapterViewPager.getRegisteredFragment(0);
             homeFrag.changeItem(tweet);
+        } else if (resultCode == RESULT_OK && requestCode == SEARCH_CODE) {
+            user = Parcels.unwrap(data.getParcelableExtra("user"));
+            showComposeDialog(null, true, user.getName());
         }
     }
 }

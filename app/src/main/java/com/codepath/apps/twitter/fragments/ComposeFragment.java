@@ -39,6 +39,7 @@ import org.parceler.Parcels;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
 import static android.app.Activity.RESULT_OK;
+import static com.codepath.apps.twitter.R.string.tweet;
 
 public class ComposeFragment extends DialogFragment {
 
@@ -47,6 +48,7 @@ public class ComposeFragment extends DialogFragment {
     private static final int PROFILE_IMG_ROUND = 4;
     private final int REQUEST_CODE = 20;
     private static final String COMPOSE_TEXT = "compose_text";
+    private static final String NEW_MESSAGE = "Send a message to ";
 
     private FragmentComposeBinding binding;
     EditText etCompose;
@@ -59,17 +61,19 @@ public class ComposeFragment extends DialogFragment {
     InputMethodManager inputMgr;
     String sharedContent;
     boolean isMessage;
+    String recipient;
 
 
     public ComposeFragment() {
         // Required empty public constructor
     }
 
-    public static ComposeFragment newInstance(String sharedContent, boolean isMessage) {
+    public static ComposeFragment newInstance(String sharedContent, boolean isMessage, String recipient) {
         Bundle args = new Bundle();
         ComposeFragment composeFragment = new ComposeFragment();
         args.putString("sharedContent", sharedContent);
         args.putBoolean("isMessage", isMessage);
+        args.putString("recipient", recipient);
         composeFragment.setArguments(args);
 
         return composeFragment;
@@ -79,6 +83,8 @@ public class ComposeFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         this.sharedContent = getArguments().getString("sharedContent", null);
         this.isMessage = getArguments().getBoolean("isMessage", false);
+        this.recipient = getArguments().getString("recipient", null);
+
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.ComposeDialog);
         inputMgr = (InputMethodManager)getActivity().getSystemService(
@@ -149,7 +155,7 @@ public class ComposeFragment extends DialogFragment {
         } else {
             disableSelection = true;
             if (isMessage) {
-                etCompose.setText(getString(R.string.message_hint));
+                etCompose.setText(String.format("%s%s", NEW_MESSAGE, recipient));
                 btnTweet.setText(getString(R.string.send));
                 tvCharCount.setVisibility(View.GONE);
             } else {
@@ -238,11 +244,16 @@ public class ComposeFragment extends DialogFragment {
         btnTweet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Tweet tweet = new Tweet();
-                tweet.setUser(User.getCurrentUser());
-                tweet.setBody(etCompose.getText().toString());
-                tweet.setCreatedAt(DateUtil.getCurrentTime());
-                composeListener.createTweet(tweet);
+                if (isMessage) {
+                    composeListener.createMessage(etCompose.getText().toString());
+                } else {
+                    Tweet tweet = new Tweet();
+                    tweet.setUser(User.getCurrentUser());
+                    tweet.setBody(etCompose.getText().toString());
+                    tweet.setCreatedAt(DateUtil.getCurrentTime());
+                    composeListener.createTweet(tweet);
+                }
+
                 dismiss();
             }
         });
@@ -292,6 +303,7 @@ public class ComposeFragment extends DialogFragment {
     public interface OnComposeListener {
         void createTweet(Tweet tweet);
         void cancelTweet();
+        void createMessage(String message);
 
     }
 

@@ -17,12 +17,10 @@ import android.widget.Toast;
 
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.MessagesArrayAdapter;
-import com.codepath.apps.twitter.adapters.TrendsArrayAdapter;
 import com.codepath.apps.twitter.databinding.FragmentMessagesBinding;
-import com.codepath.apps.twitter.databinding.FragmentTrendsBinding;
 import com.codepath.apps.twitter.models.Message;
-import com.codepath.apps.twitter.models.Trend;
-import com.codepath.apps.twitter.models.Tweet;
+
+import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import com.codepath.apps.twitter.util.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -49,20 +47,12 @@ public class MessagesFragment extends Fragment {
     TwitterClient client;
     MessagesArrayAdapter messagesArrayAdapter;
     LinearLayoutManager linearLayoutManager;
-    //private OnMessageClickListener messageClickListener;
     private FragmentMessagesBinding binding;
     final Runnable fetchRunnable = new Runnable() {
 
         @Override
         public void run() {
             fetchMessages();
-        }
-    };
-    final Runnable postTweetRunnable = new Runnable() {
-
-        @Override
-        public void run() {
-            postTweet();
         }
     };
 
@@ -82,7 +72,6 @@ public class MessagesFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_messages, container, false);
-        //messageClickListener = (OnMessageClickListener) getActivity();
         setUpRecycleView();
         setUpRefreshControl();
         //setUpClickListeners();
@@ -182,30 +171,23 @@ public class MessagesFragment extends Fragment {
         handler.removeCallbacks(fetchRunnable);
     }
 
-    public void postTweet() {
-        client.postTweet(/*tweets.get(0).getBody()*/"Random text. TO DO FIX", null, new JsonHttpResponseHandler() {
+    public void sendMessage(User user, String message) {
+        client.sendMessage(user.getScreenName(), message, new JsonHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
-                Tweet.saveTweet(jsonObject);
-                handler.removeCallbacks(postTweetRunnable);
+                Toast.makeText(
+                        getActivity(),
+                        "Your message has been sucessfully sent!",
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.e(ERROR, "Error creating tweet: " + errorResponse.toString());
-                int errorCode = errorResponse.optJSONArray("errors").optJSONObject(0).optInt("code", 0);
-                if (errorCode == RATE_LIMIT_ERR && retryCount < RETRY_LIMIT) {
-                    retryCount++;
-                    handler.postDelayed(postTweetRunnable, DELAY_MILLI);
-                } else {
-                    Toast.makeText(getContext(), "Error creating tweet. Please try again", Toast.LENGTH_SHORT).show();
-                    retryCount = 0;
-                    handler.removeCallbacks(postTweetRunnable);
-                }
+                Toast.makeText(
+                        getActivity(),
+                        "Error sending message. Please try again later.",
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
-    /*public interface OnMessageClickListener {
-        public void onMessageClick();
-    }*/
 }

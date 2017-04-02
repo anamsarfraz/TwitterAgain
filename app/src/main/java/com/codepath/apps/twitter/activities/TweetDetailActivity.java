@@ -99,9 +99,9 @@ public class TweetDetailActivity extends ComposeActivity {
             public void onClick(View v) {
                  int remainingCount = Integer.parseInt(binding.tvCharCountDetail.getText().toString());
                 if (remainingCount == MAX_COUNT) {
-                    showComposeDialog(screenName, false);
+                    showComposeDialog(screenName, false, null);
                 } else {
-                    showComposeDialog(binding.etReply.getText().toString(), false);
+                    showComposeDialog(binding.etReply.getText().toString(), false, null);
                 }
 
             }
@@ -112,9 +112,9 @@ public class TweetDetailActivity extends ComposeActivity {
             public void onClick(View v) {
                 int remainingCount = Integer.parseInt(binding.tvCharCountDetail.getText().toString());
                 if (remainingCount == MAX_COUNT) {
-                    showComposeDialog(screenName, false);
+                    showComposeDialog(screenName, false, null);
                 } else {
-                    showComposeDialog(binding.etReply.getText().toString(), false);
+                    showComposeDialog(binding.etReply.getText().toString(), false, null);
                 }
 
             }
@@ -447,6 +447,11 @@ public class TweetDetailActivity extends ComposeActivity {
     @Override
     public void createTweet(Tweet tweet) {
         postTweet(tweet);
+    }
+
+    @Override
+    public void createMessage(String message) {
+
     }
 
     private void postTweet(Tweet tweet) {

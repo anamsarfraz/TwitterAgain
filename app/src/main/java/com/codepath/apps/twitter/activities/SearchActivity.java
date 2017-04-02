@@ -16,9 +16,11 @@ import android.view.MenuItem;
 
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.databinding.ActivitySearchBinding;
+import com.codepath.apps.twitter.fragments.FollowFragment;
 import com.codepath.apps.twitter.fragments.TrendsFragment;
 import com.codepath.apps.twitter.fragments.TweetSearchFragment;
 import com.codepath.apps.twitter.fragments.UserHeaderFragment;
+import com.codepath.apps.twitter.fragments.UserSearchFragment;
 import com.codepath.apps.twitter.fragments.UserTimelineFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
@@ -34,13 +36,16 @@ import org.parceler.Parcels;
 import static com.codepath.apps.twitter.R.string.tweet;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class SearchActivity extends AppCompatActivity implements TrendsFragment.OnTrendClickListener, OnTweetClickListener {
+public class SearchActivity extends AppCompatActivity implements TrendsFragment.OnTrendClickListener, OnTweetClickListener, UserSearchFragment.OnUserClickListener {
 
     ActivitySearchBinding binding;
     TrendsFragment trendsFragment;
     TweetSearchFragment tweetSearchFragment;
+    FollowFragment followFragment;
+    UserSearchFragment userSearchFragment;
     SearchView searchView;
     EditText et;
+    boolean is_user_search;
     private final int REQUEST_CODE = 20;
 
     @Override
@@ -64,8 +69,16 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_search, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        processIntent();
+
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setQueryHint(getString(R.string.search_hint));
+        if (is_user_search) {
+            searchView.setQueryHint(getString(R.string.user_search_hint));
+        } else {
+            searchView.setQueryHint(getString(R.string.search_hint));
+        }
+
         int searchEditId = android.support.v7.appcompat.R.id.search_src_text;
         et = (EditText) searchView.findViewById(searchEditId);
         et.setTextColor(ContextCompat.getColor(this, R.color.twitter_blue));
@@ -97,7 +110,6 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
                 Log.d("Search Activity", "in focus change: "+hasFocus);
             }
         });
-        processIntent();
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -116,7 +128,13 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
     private void processIntent() {
         Intent intent = getIntent();
         String query = intent.getStringExtra("query");
-        if (query != null) {
+        is_user_search = intent.getBooleanExtra("user_search", false);
+        if (is_user_search) {
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            userSearchFragment = UserSearchFragment.newInstance(query);
+            ft.replace(R.id.flSearch, userSearchFragment);
+            ft.commit();
+        } else if (query != null) {
             et.setText(query);
             performSearch(query);
         }
@@ -124,8 +142,12 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
 
     public void performSearch(String query) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        tweetSearchFragment = TweetSearchFragment.newInstance(query);
-        ft.replace(R.id.flSearch, tweetSearchFragment);
+        if (is_user_search) {
+            userSearchFragment.beginNewSearch(query);
+        } else {
+            tweetSearchFragment = TweetSearchFragment.newInstance(query);
+            ft.replace(R.id.flSearch, tweetSearchFragment);
+        }
         ft.commit();
 
     }
@@ -194,5 +216,15 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
             Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
             tweetSearchFragment.changeItem(tweet);
         }
+    }
+
+    @Override
+    public void processUser(User user) {
+        Intent intent = new Intent();
+        // Pass updated user back as a result
+        intent.putExtra("user", Parcels.wrap(user));
+        // Activity finished ok, return the data
+        setResult(RESULT_OK, intent); // set result
+        this.finish();
     }
 }

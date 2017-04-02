@@ -64,9 +64,9 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
             @Override
             public void onClick(View v) {
                 if (user.getScreenName().equals(User.getCurrentUser().getScreenName())) {
-                    showComposeDialog(null, false);
+                    showComposeDialog(null, false, null);
                 } else {
-                    showComposeDialog(String.format("%s%s ", Constants.ATRATE, user.getScreenName()), false);
+                    showComposeDialog(String.format("%s%s ", Constants.ATRATE, user.getScreenName()), false, null);
                 }
             }
         });
@@ -149,6 +149,11 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
         UserTimelineFragment userFrag = (UserTimelineFragment) adapterViewPager.getRegisteredFragment(0);
         userFrag.addItem(tweet);
         userFrag.postTweet();
+    }
+
+    @Override
+    public void createMessage(String message) {
+        // Noop
     }
 
     @Override

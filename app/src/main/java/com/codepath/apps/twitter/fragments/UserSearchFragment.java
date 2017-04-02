@@ -15,25 +15,23 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.FollowArrayAdapter;
-import com.codepath.apps.twitter.adapters.TweetsArrayAdapter;
+import com.codepath.apps.twitter.adapters.UserArrayAdapter;
 import com.codepath.apps.twitter.databinding.FragmentFollowBinding;
-import com.codepath.apps.twitter.databinding.FragmentTweetsListBinding;
+import com.codepath.apps.twitter.databinding.FragmentUserSearchBinding;
 import com.codepath.apps.twitter.models.Follow;
-import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Connectivity;
 import com.codepath.apps.twitter.util.EndlessRecyclerViewScrollListener;
-import com.codepath.apps.twitter.util.OnTweetClickListener;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import com.codepath.apps.twitter.util.TwitterClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.parceler.Parcels;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +39,7 @@ import java.util.List;
 import cz.msebera.android.httpclient.Header;
 
 
-public class FollowFragment extends Fragment {
+public class UserSearchFragment extends Fragment {
 
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
@@ -49,45 +47,45 @@ public class FollowFragment extends Fragment {
     private static final int RETRY_LIMIT = 3;
     private static final long DELAY_MILLI = 3000;
 
-    List<Follow> follows;
-    long nextCursor;
+    List<User> users;
+    int page;
     int retryCount;
     int currPosition;
-    FollowArrayAdapter followArrayAdapter;
+    UserArrayAdapter userArrayAdapter;
     LinearLayoutManager linearLayoutManager;
-    private FragmentFollowBinding binding;
+    private FragmentUserSearchBinding binding;
     // Store a member variable for the listener
     private EndlessRecyclerViewScrollListener scrollListener;
     TwitterClient client;
     Handler handler;
-    boolean isFollowers;
-    String screenName;
+    String query;
     final Runnable fetchRunnable = new Runnable() {
 
         @Override
         public void run() {
-            fetchFollows();
+            fetchUsers();
         }
     };
+    private OnUserClickListener onUserClickListener;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         client = TwitterApplication.getRestClient();
-        follows = new ArrayList<>();
-        followArrayAdapter = new FollowArrayAdapter(getActivity(), follows);
+        users = new ArrayList<>();
+        userArrayAdapter = new UserArrayAdapter(getActivity(), users);
         handler = new Handler();
-        isFollowers = getArguments().getBoolean("get_followers");
-        screenName = getArguments().getString("screen_name");
+        query = getArguments().getString("query");
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_follow, container, false);
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_search, container, false);
 
+        onUserClickListener = (OnUserClickListener) getActivity();
         setUpRecycleView();
         setUpRefreshControl();
         setUpScrollListeners();
@@ -98,44 +96,69 @@ public class FollowFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // fetch followers/following on first load
-        beginNewSearch();
+        // fetch following users on first load
+        fetchFollowers();
     }
 
-    public static FollowFragment newInstance(boolean isFollowers, String screeName) {
+    public void fetchFollowers() {
+        client.getFollow(true, -1, User.getCurrentUser().getScreenName(), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                hideRefreshControl();
+                Log.d("DEBUG", "Follow response: " + jsonObject.toString());
+                List<User> newUsers = User.fromJSONArray(jsonObject.optJSONArray("users"));
+                processFetchedUsers(newUsers);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                hideRefreshControl();
+                Log.e(ERROR, "Error fetching followers: " + (errorResponse == null ? "Uknown error" : errorResponse.toString()));
+                int errorCode = errorResponse.optJSONArray("errors").optJSONObject(0).optInt("code", 0);
+
+                if (errorCode == RATE_LIMIT_ERR && retryCount < RETRY_LIMIT) {
+                    retryCount++;
+                    handler.postDelayed(fetchRunnable, DELAY_MILLI);
+                } else {
+                    fetchOffline();
+                }
+            }
+        });
+    }
+
+    public static UserSearchFragment newInstance(String query) {
 
         Bundle args = new Bundle();
 
-        FollowFragment followFragment = new FollowFragment();
-        args.putBoolean("get_followers", isFollowers);
-        args.putString("screen_name", screeName);
+        UserSearchFragment userSearchFragment = new UserSearchFragment();
+        args.putString("query", query);
 
-        followFragment.setArguments(args);
-        return followFragment;
+        userSearchFragment.setArguments(args);
+        return userSearchFragment;
     }
 
     private void setUpRecycleView() {
-        binding.rvFollow.setAdapter(followArrayAdapter);
+        binding.rvUser.setAdapter(userArrayAdapter);
         linearLayoutManager = new LinearLayoutManager(getActivity());
-        binding.rvFollow.setLayoutManager(linearLayoutManager);
+        binding.rvUser.setLayoutManager(linearLayoutManager);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(getActivity(),
                 LinearLayoutManager.VERTICAL);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             dividerItemDecoration.setDrawable(getActivity().getDrawable(R.drawable.line_divider));
         }
-        binding.rvFollow.addItemDecoration(dividerItemDecoration);
+        binding.rvUser.addItemDecoration(dividerItemDecoration);
     }
 
     private void setUpRefreshControl() {
-        binding.scFollow.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        binding.scUser.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 beginNewSearch();
             }
         });
         // Configure the refreshing colors
-        binding.scFollow.setColorSchemeResources(android.R.color.holo_blue_bright,
+        binding.scUser.setColorSchemeResources(android.R.color.holo_blue_bright,
                 android.R.color.holo_green_light,
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
@@ -145,32 +168,38 @@ public class FollowFragment extends Fragment {
         scrollListener = new EndlessRecyclerViewScrollListener(linearLayoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (nextCursor != 0) {
-                    loadMore();
-                }
+
+                loadMore();
             }
         };
         // Adds the scroll listener to RecyclerView
-        binding.rvFollow.addOnScrollListener(scrollListener);
+        binding.rvUser.addOnScrollListener(scrollListener);
     }
 
     private void setUpClickListeners() {
-        followArrayAdapter.setOnItemClickListener(new FollowArrayAdapter.OnItemClickListener() {
+        userArrayAdapter.setOnItemClickListener(new UserArrayAdapter.OnItemClickListener() {
             @Override
-            public void onImageClick(View imageView, int position) {
+            public void onItemClick(View imageView, int position) {
                 currPosition = position;
-                Follow follow = follows.get(position);
-                follow.setFollowing(!follow.isFollowing());
-                changeItem(follow);
-                client.startFollow(follow.isFollowing(), follow.getScreenName(), new JsonHttpResponseHandler() {
+                final User user = users.get(position);
+                client.getRelationship(User.getCurrentUser().getScreenName(), user.getScreenName(), new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
-                       Log.d(DEBUG, "Successfully started following");
+                        Log.d("DEBUG", "User relationship response: " + jsonObject.toString());
+                        boolean canDM = jsonObject.optJSONObject("relationship").optJSONObject("source").optBoolean("can_dm");
+                        if (canDM) {
+                            onUserClickListener.processUser(user);
+                        } else {
+                            Toast.makeText(
+                                    getActivity(),
+                                    "Sorry you cannot message this account.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                        Log.e(ERROR, "Error following user: "+errorResponse.toString());
+                        Log.e(ERROR, "Error fetching relationship: " + (errorResponse == null ? "Uknown error" : errorResponse.toString()));
                     }
                 });
             }
@@ -179,37 +208,42 @@ public class FollowFragment extends Fragment {
 
 
     public void hideRefreshControl() {
-        if (binding.scFollow.isRefreshing()) {
-            binding.scFollow.setRefreshing(false);
+        if (binding.scUser.isRefreshing()) {
+            binding.scUser.setRefreshing(false);
         }
     }
 
-    public void addItem(Follow follow) {
-        follows.add(0, follow);
-        followArrayAdapter.notifyItemInserted(0);
+    public void addItem(User user) {
+        users.add(0, user);
+        userArrayAdapter.notifyItemInserted(0);
     }
 
-    public void changeItem(Follow follow) {
-        follows.set(currPosition, follow);
-        followArrayAdapter.notifyItemChanged(currPosition);
+    public void changeItem(User user) {
+        users.set(currPosition, user);
+        userArrayAdapter.notifyItemChanged(currPosition);
     }
 
-    public void addAll(List<Follow> newFollows) {
-        int curSize = followArrayAdapter.getItemCount();
-        follows.addAll(newFollows);
-        int newSize = newFollows.size();
-        followArrayAdapter.notifyItemRangeInserted(curSize, newSize);
-        binding.pbFollow.setVisibility(ProgressBar.INVISIBLE);
+    public void addAll(List<User> newUsers) {
+        int curSize = userArrayAdapter.getItemCount();
+        users.addAll(newUsers);
+        int newSize = newUsers.size();
+        userArrayAdapter.notifyItemRangeInserted(curSize, newSize);
+        binding.pbUser.setVisibility(ProgressBar.INVISIBLE);
     }
     public void removeAll() {
-        followArrayAdapter.clearItems();
+        userArrayAdapter.clearItems();
         scrollListener.resetState();
         hideRefreshControl();
     }
 
 
+    public void beginNewSearch(String query) {
+        this.query = query;
+        beginNewSearch();
+    }
+
     public void beginNewSearch() {
-        nextCursor = -1L;
+        page = 0;
         removeAll();
 
         loadMore();
@@ -217,42 +251,42 @@ public class FollowFragment extends Fragment {
     }
 
     public void loadMore() {
-        binding.pbFollow.setVisibility(ProgressBar.VISIBLE);
+        binding.pbUser.setVisibility(ProgressBar.VISIBLE);
         retryCount = 0;
-        if (nextCursor > 0) {
+        if (page > 0) {
             Log.d(DEBUG, "User scrolled. Load additional tweets");
         }
         if (Connectivity.isConnected(getActivity())) {
-            fetchFollows();
+            fetchUsers();
         } else {
             fetchOffline();
         }
     }
 
-    private void processFetchedFollows(List<Follow> newFollows) {
+    private void processFetchedUsers(List<User> newUsers) {
         retryCount = 0;
-        int newSize = newFollows.size();
+        int newSize = newUsers.size();
 
-        addAll(newFollows);
+        addAll(newUsers);
         handler.removeCallbacks(fetchRunnable);
     }
 
-    public void fetchFollows() {
+    public void fetchUsers() {
 
-        client.getFollow(isFollowers, nextCursor, screenName, new JsonHttpResponseHandler() {
+        client.searchUsers(page, query, new JsonHttpResponseHandler() {
             @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+            public void onSuccess(int statusCode, Header[] headers, JSONArray jsonArray) {
                 hideRefreshControl();
-                Log.d("DEBUG", "Follow response: " + jsonObject.toString());
-                List<Follow> newFollows = Follow.fromJSONArray(jsonObject.optJSONArray("users"));
-                nextCursor = jsonObject.optLong("next_cursor");
-                processFetchedFollows(newFollows);
+                Log.d("DEBUG", "User search response: " + jsonArray.toString());
+                List<User> newUsers = User.fromJSONArray(jsonArray);
+                page ++;
+                processFetchedUsers(newUsers);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 hideRefreshControl();
-                Log.e(ERROR, "Error fetching follows: " + (errorResponse == null ? "Uknown error" : errorResponse.toString()));
+                Log.e(ERROR, "Error fetching users: " + (errorResponse == null ? "Uknown error" : errorResponse.toString()));
                 int errorCode = errorResponse.optJSONArray("errors").optJSONObject(0).optInt("code", 0);
 
                 if (errorCode == RATE_LIMIT_ERR && retryCount < RETRY_LIMIT) {
@@ -267,5 +301,9 @@ public class FollowFragment extends Fragment {
 
     public void fetchOffline() {
 
+    }
+
+    public interface OnUserClickListener {
+        public void processUser(User user);
     }
 }

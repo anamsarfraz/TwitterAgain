@@ -11,12 +11,16 @@ import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.parceler.Parcel;
 import org.parceler.Parcels;
 import org.parceler.Transient;
 
+import java.util.ArrayList;
+
+import static android.R.id.message;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
 
@@ -180,6 +184,25 @@ public class User extends BaseModel {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public static ArrayList<User> fromJSONArray(JSONArray jsonArray) {
+        ArrayList<User> users = new ArrayList<>(jsonArray.length());
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject userJson = null;
+            try {
+                userJson = jsonArray.getJSONObject(i);
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            User user = new User(userJson);
+            users.add(user);
+        }
+
+        return users;
     }
 
     public static User byId(long uid) {
