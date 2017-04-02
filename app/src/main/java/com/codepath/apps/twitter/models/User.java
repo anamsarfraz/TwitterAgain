@@ -54,6 +54,9 @@ public class User extends BaseModel {
     String profileImageUrl;
 
     @Column
+    String profileBannerUrl;
+
+    @Column
     boolean verified;
 
     @Column
@@ -121,12 +124,21 @@ public class User extends BaseModel {
         this.screenName = screenName;
     }
 
+
     public String getProfileImageUrl() {
         return profileImageUrl;
     }
 
     public void setProfileImageUrl(String profileImageUrl) {
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public String getProfileBannerUrl() {
+        return profileBannerUrl;
+    }
+
+    public void setProfileBannerUrl(String profileBannerUrl) {
+        this.profileBannerUrl = profileBannerUrl;
     }
 
     public boolean getVerified() {
@@ -175,6 +187,7 @@ public class User extends BaseModel {
             this.name = jsonObject.getString("name");
             this.screenName = jsonObject.getString("screen_name");
             this.profileImageUrl = jsonObject.getString("profile_image_url");
+            this.profileBannerUrl = jsonObject.optString("profile_banner_url");
             this.verified = jsonObject.getBoolean("verified");
             this.tagLine = jsonObject.getString("description");
             this.followersCount = jsonObject.getInt("followers_count");

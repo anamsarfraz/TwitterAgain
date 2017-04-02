@@ -3,11 +3,15 @@ package com.codepath.apps.twitter.activities;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.ProfilePagerAdapter;
 import com.codepath.apps.twitter.adapters.TweetsPagerAdapter;
@@ -26,6 +30,9 @@ import com.codepath.apps.twitter.util.TwitterClient;
 
 import org.parceler.Parcels;
 
+import jp.wasabeef.glide.transformations.CropCircleTransformation;
+
+import static com.codepath.apps.twitter.R.id.ivUserBannerProfile;
 import static com.codepath.apps.twitter.R.id.pstsToolbar;
 import static com.codepath.apps.twitter.R.string.tweet;
 import static com.codepath.apps.twitter.models.User.getCurrentUser;
@@ -44,9 +51,8 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
         binding = DataBindingUtil.setContentView(this, R.layout.activity_profile);
         user = Parcels.unwrap(getIntent().getParcelableExtra("user"));
 
-        setSupportActionBar(binding.tbProfile);
-        getSupportActionBar().setTitle(user.getName());
-        binding.tbProfile.setTitle("Profile");
+        setUpToolbar();
+
 
         setTabViewPager();
         setUpClickListeners();
@@ -57,6 +63,42 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
             ft.replace(R.id.flUserHeader, userHeaderFragment);
             ft.commit();
         }
+    }
+
+    private void setUpToolbar() {
+        Toolbar toolbar = (Toolbar) binding.toolbarLayoutCollapse.findViewById(R.id.tbProfile);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(user.getName());
+        toolbar.setTitle("");
+        final ImageView imgView = (ImageView) binding.toolbarLayoutCollapse.findViewById(R.id.ivUserBannerProfile);
+        if (user.getProfileBannerUrl() != null) {
+            Glide.with(this)
+                    .load(user.getProfileBannerUrl())
+                    .placeholder(R.drawable.tweet_social)
+                    .crossFade()
+                    .into(imgView);
+        }
+
+        binding.abProfile.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            int scrollRange = -1;
+
+
+            @Override
+            public void onOffsetChanged(final AppBarLayout appBarLayout, int verticalOffset) {
+                //Initialize the size of the scroll
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                //Check if the view is collapsed
+                if (scrollRange + verticalOffset == 0) {
+                    imgView.setAlpha((float) 0.3);
+
+                }else{
+                    imgView.setAlpha((float) 1.0);
+                }
+            }
+        });
+
     }
 
     private void setUpClickListeners() {
