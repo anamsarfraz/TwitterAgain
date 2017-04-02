@@ -48,8 +48,8 @@
             android:layout_width="match_parent"
             android:layout_below="@id/ivUserImageTimeline"
             android:layout_height="48dp"
-            app:pstsDividerColor="@android:color/white"
-            app:pstsIndicatorColor="@android:color/white"
+            app:pstsDividerColor="@color/twitter_grey"
+            app:pstsIndicatorColor="@color/twitter_grey"
             app:pstsUnderlineColor="@android:color/transparent"
             android:textColor="@android:color/white"/>
 

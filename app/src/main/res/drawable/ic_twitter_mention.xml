@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:viewportWidth="32"
+    android:viewportHeight="32"
+    android:width="24dp"
+    android:height="24dp">
+    <path
+        android:pathData="M29.844 24C31.215 21.645 32 18.922 32 16 32 7.164 24.836 0 16 0 7.164 0 0 7.164 0 16c0 8.836 7.164 16 16 16 4.418 0 8.418 -1.789 11.312 -4.688L24.48 24.48C22.309 26.656 19.309 28 16 28 9.383 28 4 22.617 4 16 4 9.383 9.383 4 16 4c6.617 0 12 5.383 12 12 0 1.422 -0.273 2.781 -0.73 4.047L27.238 20 24 20 24 8.043l-8 0c-4.418 0 -8 3.582 -8 8 0 4.418 3.582 8 8 8 1.836 0 3.508 -0.645 4.859 -1.684C21.586 23.328 22.695 24 24 24l5.844 0zM20 14.008l0 2.035c0 2.207 -1.797 4 -4 4 -2.203 0 -4 -1.793 -4 -4 0 -2.207 1.797 -4 4 -4l4 0 0 1.965z"
+        android:fillColor="@color/twitter_grey_dark" />
+</vector>
