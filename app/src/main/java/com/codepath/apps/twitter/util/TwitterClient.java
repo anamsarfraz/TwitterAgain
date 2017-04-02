@@ -136,4 +136,15 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("id", statusId);
         getClient().post(apiUrl, params, handler);
     }
+
+    public void getMessages(long maxId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("direct_messages.json");
+        RequestParams params = new RequestParams();
+        params.put("count", Constants.MAX_TWEET_COUNT);
+        if (maxId > 0) {
+            params.put("max_id", maxId);
+        }
+
+        getClient().get(apiUrl, params, handler);
+    }
 }

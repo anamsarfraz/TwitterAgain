@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:gravity="start">
+
+    <ImageView
+        android:id="@+id/ivProfileImageMessage"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/margin8"
+        app:srcCompat="@drawable/ic_launcher" />
+    <TextView
+        android:id="@+id/tvUserNameMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ivProfileImageMessage"
+        android:layout_toEndOf="@+id/ivProfileImageMessage"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        tools:text="CNN" />
+    <TextView
+        android:id="@+id/tvScreenNameMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="\@CNN"
+        android:layout_marginStart="@dimen/margin4"
+        android:layout_alignTop="@+id/tvUserNameMessage"
+        android:layout_toEndOf="@+id/tvUserNameMessage"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:maxWidth="@dimen/width200"
+        android:textColor="@color/twitter_grey_dark"
+        android:drawableEnd="@drawable/dot_divider"
+        android:drawablePadding="@dimen/margin4"/>
+    <TextView
+        android:id="@+id/tvCreatedTimeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tvScreenNameMessage"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/twitter_grey_dark"
+        android:maxLines="1"
+        tools:text="25m" />
+    <TextView
+        android:id="@+id/tvTextMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Samsung is known around the world for its smartphones. But in South Korea, it's a lot more than just a tech brand http://cnn.it/2mMWwRT "
+        android:layout_marginTop="@dimen/margin4"
+        android:layout_marginEnd="@dimen/margin4"
+        android:layout_below="@+id/tvUserNameMessage"
+        android:layout_alignStart="@+id/tvUserNameMessage"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:textColor="@color/twitter_grey_dark"
+        android:textColorLink="@color/twitter_blue" />
+</RelativeLayout>

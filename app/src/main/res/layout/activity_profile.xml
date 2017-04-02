@@ -34,9 +34,8 @@
 
             />
 
-
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabCompose"
+            android:id="@+id/fabComposeProfile"
             app:srcCompat="@drawable/tweet_compose"
             app:fabSize="auto"
             android:layout_width="wrap_content"

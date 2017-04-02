@@ -26,7 +26,7 @@ public class ConfirmationFragment extends DialogFragment {
         ConfirmationFragment frag = new ConfirmationFragment();
         Bundle args = new Bundle();
 
-        args.putString("message", message);
+        args.putString("message_compose", message);
         frag.setArguments(args);
         return frag;
     }
@@ -34,7 +34,7 @@ public class ConfirmationFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.ConfirmationDialogCustom);
-        alertDialogBuilder.setMessage(getArguments().getString("message"));
+        alertDialogBuilder.setMessage(getArguments().getString("message_compose"));
         alertDialogBuilder.setPositiveButton(SAVE,  new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int position) {

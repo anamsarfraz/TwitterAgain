@@ -15,5 +15,6 @@
     <dimen name="margin60">60dp</dimen>
     <dimen name="margin64">64dp</dimen>
     <dimen name="margin10">10dp</dimen>
+    <dimen name="width200">200dp</dimen>
 
 </resources>

@@ -14,5 +14,7 @@
     <string name="home">Home</string>
     <string name="search">Search</string>
     <string name="search_hint">Search Twitter</string>
+    <string name="message_hint">Send a new message</string>
+    <string name="send">Send</string>
 
 </resources>

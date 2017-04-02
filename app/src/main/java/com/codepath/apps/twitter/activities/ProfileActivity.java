@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.ProfilePagerAdapter;
@@ -17,6 +18,7 @@ import com.codepath.apps.twitter.fragments.UserHeaderFragment;
 import com.codepath.apps.twitter.fragments.UserTimelineFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
+import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.OnTweetClickListener;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import com.codepath.apps.twitter.util.TwitterClient;
@@ -27,7 +29,7 @@ import static com.codepath.apps.twitter.R.id.pstsToolbar;
 import static com.codepath.apps.twitter.models.User.getCurrentUser;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class ProfileActivity extends AppCompatActivity implements OnTweetClickListener {
+public class ProfileActivity extends ComposeActivity implements OnTweetClickListener {
 
     ActivityProfileBinding binding;
     ProfilePagerAdapter adapterViewPager;
@@ -45,6 +47,7 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
         binding.tbProfile.setTitle("Profile");
 
         setTabViewPager();
+        setUpClickListeners();
 
         if (savedInstanceState == null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -53,6 +56,20 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
             ft.commit();
         }
     }
+
+    private void setUpClickListeners() {
+        binding.fabComposeProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (user.getScreenName().equals(User.getCurrentUser().getScreenName())) {
+                    showComposeDialog(null, false);
+                } else {
+                    showComposeDialog(String.format("%s%s ", Constants.ATRATE, user.getScreenName()), false);
+                }
+            }
+        });
+    }
+
 
     private void setTabViewPager() {
         // Set the view pager adapter for the pager
@@ -123,5 +140,12 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
             UserTimelineFragment userFrag = (UserTimelineFragment) adapterViewPager.getRegisteredFragment(0);
             userFrag.changeItem(tweet);
         }
+    }
+
+    @Override
+    public void createTweet(Tweet tweet) {
+        UserTimelineFragment userFrag = (UserTimelineFragment) adapterViewPager.getRegisteredFragment(0);
+        userFrag.addItem(tweet);
+        userFrag.postTweet();
     }
 }

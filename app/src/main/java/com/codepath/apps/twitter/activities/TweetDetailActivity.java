@@ -99,9 +99,9 @@ public class TweetDetailActivity extends ComposeActivity {
             public void onClick(View v) {
                  int remainingCount = Integer.parseInt(binding.tvCharCountDetail.getText().toString());
                 if (remainingCount == MAX_COUNT) {
-                    showComposeDialog(screenName);
+                    showComposeDialog(screenName, false);
                 } else {
-                    showComposeDialog(binding.etReply.getText().toString());
+                    showComposeDialog(binding.etReply.getText().toString(), false);
                 }
 
             }
@@ -112,9 +112,9 @@ public class TweetDetailActivity extends ComposeActivity {
             public void onClick(View v) {
                 int remainingCount = Integer.parseInt(binding.tvCharCountDetail.getText().toString());
                 if (remainingCount == MAX_COUNT) {
-                    showComposeDialog(screenName);
+                    showComposeDialog(screenName, false);
                 } else {
-                    showComposeDialog(binding.etReply.getText().toString());
+                    showComposeDialog(binding.etReply.getText().toString(), false);
                 }
 
             }

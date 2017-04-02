@@ -58,16 +58,18 @@ public class ComposeFragment extends DialogFragment {
     private OnComposeListener composeListener;
     InputMethodManager inputMgr;
     String sharedContent;
+    boolean isMessage;
 
 
     public ComposeFragment() {
         // Required empty public constructor
     }
 
-    public static ComposeFragment newInstance(String sharedContent) {
+    public static ComposeFragment newInstance(String sharedContent, boolean isMessage) {
         Bundle args = new Bundle();
         ComposeFragment composeFragment = new ComposeFragment();
         args.putString("sharedContent", sharedContent);
+        args.putBoolean("isMessage", isMessage);
         composeFragment.setArguments(args);
 
         return composeFragment;
@@ -76,6 +78,7 @@ public class ComposeFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         this.sharedContent = getArguments().getString("sharedContent", null);
+        this.isMessage = getArguments().getBoolean("isMessage", false);
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NORMAL, R.style.ComposeDialog);
         inputMgr = (InputMethodManager)getActivity().getSystemService(
@@ -145,7 +148,14 @@ public class ComposeFragment extends DialogFragment {
             etCompose.setSelection(sharedContent.length());
         } else {
             disableSelection = true;
-            etCompose.setText(getString(R.string.compose_hint));
+            if (isMessage) {
+                etCompose.setText(getString(R.string.message_hint));
+                btnTweet.setText(getString(R.string.send));
+                tvCharCount.setVisibility(View.GONE);
+            } else {
+                etCompose.setText(getString(R.string.compose_hint));
+            }
+
             etCompose.setSelection(0);
             etCompose.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
             btnTweet.setEnabled(false);
@@ -181,7 +191,7 @@ public class ComposeFragment extends DialogFragment {
                 int remainingCount = MAX_COUNT - currLength;
                 tvCharCount.setText(String.format("%d", remainingCount));
 
-                if (remainingCount == MAX_COUNT || remainingCount < 0) {
+                if (remainingCount == MAX_COUNT || remainingCount < 0 && !isMessage) {
                     btnTweet.setEnabled(false);
                     btnTweet.setAlpha((float)0.7);
 
@@ -196,9 +206,6 @@ public class ComposeFragment extends DialogFragment {
                 } else {
                     tvCharCount.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
                 }
-
-
-
             }
 
             @Override
@@ -212,7 +219,12 @@ public class ComposeFragment extends DialogFragment {
                     etCompose.setTextColor(ContextCompat.getColor(getContext(), android.R.color.black));
                 } else if (s.length() == 0) {
                     disableSelection = true;
-                    etCompose.setText(getString(R.string.compose_hint));
+                    if (isMessage) {
+                        etCompose.setText(getString(R.string.message_hint));
+                    } else {
+                        etCompose.setText(getString(R.string.compose_hint));
+                    }
+
                     etCompose.setSelection(0);
                     etCompose.setTextColor(ContextCompat.getColor(getContext(), android.R.color.darker_gray));
                 }

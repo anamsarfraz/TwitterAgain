@@ -6,6 +6,7 @@ import android.databinding.DataBindingUtil;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -61,6 +62,26 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
         // Find the sliding tabstrip
         // Attach the tab strip to the view pager
         binding.tbViews.pstsToolbar.setViewPager(binding.vpTimeline);
+        binding.tbViews.pstsToolbar.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if (position == 2) {
+                    binding.fabCompose.setImageResource(R.drawable.message_compose);
+                } else {
+                    binding.fabCompose.setImageResource(R.drawable.tweet_compose);
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
     }
 
@@ -112,7 +133,7 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
                 String urlOfPage = intent.getStringExtra(Intent.EXTRA_TEXT);
 
                 String sharedContent = String.format("%s\n%s", titleOfPage, urlOfPage);
-                showComposeDialog(sharedContent);
+                showComposeDialog(sharedContent, false);
             }
         }
     }
@@ -128,7 +149,12 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
         binding.fabCompose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showComposeDialog(null);
+                if (binding.vpTimeline.getCurrentItem() == 2) {
+                    showComposeDialog(null, true);
+                } else {
+                    showComposeDialog(null, false);
+                }
+
             }
         });
 

@@ -6,13 +6,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.twitter.fragments.MentionsTimelineFragment;
+import com.codepath.apps.twitter.fragments.MessagesFragment;
 
 
 // Order and creation of fragments with the page
 public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
     final String HOME = "Home";
     final String MENTIONS = "Mentions";
-    private String tabTitles [] = {HOME, MENTIONS};
+    final String MESSAGES = "Messages";
+
+    private String tabTitles [] = {HOME, MENTIONS, MESSAGES};
 
     // Adapter gets the manager insert or remove from the activity
     public TweetsPagerAdapter(FragmentManager fm) {
@@ -26,6 +29,8 @@ public class TweetsPagerAdapter extends SmartFragmentStatePagerAdapter {
             return new HomeTimelineFragment();
         } else if (position == 1) {
             return new MentionsTimelineFragment();
+        } else if (position == 2) {
+            return new MessagesFragment();
         } else {
             return null;
         }

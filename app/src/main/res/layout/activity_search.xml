@@ -19,8 +19,6 @@
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
                 >
-
-
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
         <FrameLayout
@@ -29,20 +27,5 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
         </FrameLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabComposeSearch"
-            app:srcCompat="@drawable/tweet_compose"
-            app:fabSize="auto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/margin16"
-            android:layout_marginBottom="@dimen/margin16"
-            app:layout_anchor="@id/flSearch"
-            app:layout_anchorGravity="bottom|end"
-            app:backgroundTint="#1da1f2"
-            />
-
-
     </android.support.design.widget.CoordinatorLayout>
 </layout>
