@@ -64,6 +64,7 @@
         <activity android:name=".activities.SplashActivity" />
         <activity
             android:name=".activities.ProfileActivity"
+            android:label="@string/profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activities.SearchActivity"

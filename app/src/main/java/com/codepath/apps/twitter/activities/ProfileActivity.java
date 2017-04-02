@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -44,6 +45,7 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
     ProfilePagerAdapter adapterViewPager;
     User user;
     private final int REQUEST_CODE = 20;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +68,10 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
     }
 
     private void setUpToolbar() {
-        Toolbar toolbar = (Toolbar) binding.toolbarLayoutCollapse.findViewById(R.id.tbProfile);
+        toolbar = (Toolbar) binding.toolbarLayoutCollapse.findViewById(R.id.tbProfile);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(user.getName());
-        toolbar.setTitle("");
+        getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_arrow);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         final ImageView imgView = (ImageView) binding.toolbarLayoutCollapse.findViewById(R.id.ivUserBannerProfile);
         if (user.getProfileBannerUrl() != null) {
             Glide.with(this)
@@ -91,9 +93,12 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
                 }
                 //Check if the view is collapsed
                 if (scrollRange + verticalOffset == 0) {
-                    imgView.setAlpha((float) 0.3);
-
-                }else{
+                    imgView.setAlpha((float) 0.2);
+                    imgView.setVisibility(View.GONE);
+                    getSupportActionBar().setHomeAsUpIndicator(R.drawable.back_arrow);
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                    toolbar.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), android.R.color.white));
+                } else{
                     imgView.setAlpha((float) 1.0);
                 }
             }
@@ -125,6 +130,17 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 
     @Override
     public void onItemClick(Tweet tweet) {

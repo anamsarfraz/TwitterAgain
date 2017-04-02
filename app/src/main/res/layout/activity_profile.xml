@@ -22,11 +22,13 @@
                 app:expandedTitleMarginEnd="64dp"
                 app:expandedTitleMarginStart="48dp"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/tbProfile"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     app:layout_scrollFlags="scroll|enterAlways"
+                    android:minHeight="48dp"
                     />
                 <ImageView
                     android:id="@+id/ivUserBannerProfile"
@@ -34,9 +36,9 @@
                     android:layout_height="200dp"
                     android:scaleType="fitXY"
                     app:layout_scrollFlags="scroll|enterAlways|exitUntilCollapsed"
-                    android:minHeight="48dp"
 
                     />
+
 
             </android.support.design.widget.CollapsingToolbarLayout>
             <!--<android.support.v7.widget.Toolbar
