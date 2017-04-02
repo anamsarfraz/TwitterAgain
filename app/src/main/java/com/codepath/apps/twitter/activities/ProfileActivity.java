@@ -11,6 +11,7 @@ import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.ProfilePagerAdapter;
 import com.codepath.apps.twitter.adapters.TweetsPagerAdapter;
 import com.codepath.apps.twitter.databinding.ActivityProfileBinding;
+import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.fragments.UserHeaderFragment;
 import com.codepath.apps.twitter.fragments.UserTimelineFragment;
@@ -31,6 +32,7 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
     ActivityProfileBinding binding;
     ProfilePagerAdapter adapterViewPager;
     User user;
+    private final int REQUEST_CODE = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +72,7 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
 
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-        startActivity(intent, animationBundle);
+        startActivityForResult(intent, REQUEST_CODE, animationBundle);
     }
 
     @Override
@@ -105,6 +107,21 @@ public class ProfileActivity extends AppCompatActivity implements OnTweetClickLi
 
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-        startActivity(intent, animationBundle);
+        startActivityForResult(intent, REQUEST_CODE, animationBundle);
+    }
+
+    @Override
+    public void onMessageClick(Tweet tweet) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            UserTimelineFragment userFrag = (UserTimelineFragment) adapterViewPager.getRegisteredFragment(0);
+            userFrag.changeItem(tweet);
+        }
     }
 }

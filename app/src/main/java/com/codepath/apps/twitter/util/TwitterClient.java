@@ -10,6 +10,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import static com.codepath.apps.twitter.models.Tweet_Table.body;
 import static com.codepath.apps.twitter.models.User_Table.screenName;
 
 /*
@@ -110,5 +111,29 @@ public class TwitterClient extends OAuthBaseClient {
 		}
 
 		getClient().get(apiUrl, params, handler);
+    }
+
+    public void retweet(String statusId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl(String.format("statuses/retweet/%s.json", statusId));
+        getClient().post(apiUrl, handler);
+    }
+
+    public void unretweet(String statusId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl(String.format("statuses/unretweet/%s.json", statusId));
+        getClient().post(apiUrl, handler);
+    }
+
+    public void favorite(String statusId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("favorites/create.json");
+        RequestParams params = new RequestParams();
+        params.put("id", statusId);
+        getClient().post(apiUrl, params, handler);
+    }
+
+    public void unfavorite(String statusId, AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("favorites/destroy.json");
+        RequestParams params = new RequestParams();
+        params.put("id", statusId);
+        getClient().post(apiUrl, params, handler);
     }
 }

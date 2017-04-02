@@ -24,6 +24,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 
 import com.codepath.apps.twitter.databinding.ActivityTimelineBinding;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import org.parceler.Parcels;
 
@@ -35,6 +36,7 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
 
     public static final String DEBUG = "DEBUG";
     public static final String ERROR = "ERROR";
+    private final int REQUEST_CODE = 20;
     TweetsPagerAdapter adapterViewPager;
     ActivityTimelineBinding binding;
 
@@ -178,7 +180,7 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
 
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-        startActivity(intent, animationBundle);
+        startActivityForResult(intent, REQUEST_CODE, animationBundle);
     }
 
     @Override
@@ -208,7 +210,21 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
 
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-        startActivity(intent, animationBundle);
+        startActivityForResult(intent, REQUEST_CODE, animationBundle);
     }
 
+    @Override
+    public void onMessageClick(Tweet tweet) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            HomeTimelineFragment homeFrag = (HomeTimelineFragment) adapterViewPager.getRegisteredFragment(0);
+            homeFrag.changeItem(tweet);
+        }
+    }
 }

@@ -234,4 +234,5 @@ public class Tweet extends BaseModel{
                 .limit(Constants.MAX_TWEET_COUNT)
                 .queryList();
     }
+
 }

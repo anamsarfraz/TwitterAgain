@@ -47,6 +47,7 @@ import java.util.regex.Pattern;
 import cz.msebera.android.httpclient.Header;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import static android.R.attr.data;
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
 import static com.codepath.apps.twitter.R.color.twitter_blue;
 import static com.codepath.apps.twitter.util.FormatUtil.buildSpan;
@@ -118,6 +119,123 @@ public class TweetDetailActivity extends ComposeActivity {
 
             }
         });
+
+        binding.btnRetweetDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tweet tweetChanged = tweet;
+                if (tweetChanged.getRetweetedStatus() != null) {
+                    tweetChanged = tweetChanged.getRetweetedStatus();
+                }
+
+                if (tweetChanged.isRetweeted()) {
+                    tweetChanged.setRetweeted(false);
+                    tweetChanged.setRetweetCount(tweetChanged.getRetweetCount()-1);
+                    final Tweet modifiedTweet = tweetChanged;
+
+                    binding.tvRetweets.setText(FormatUtil.buildSpan(FormatUtil.format(tweetChanged.getRetweetCount()), RETWEEETS));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        binding.btnRetweetDetail.setBackground(getDrawable(R.drawable.retweet_default));
+                    }
+                    client.unretweet(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            tweet.delete();
+                            tweet = modifiedTweet;
+                            retweetedStatus = tweet.getRetweetedStatus();
+                            populateViews();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error UnRetweeting: " + errorResponse.toString());
+
+                        }
+                    });
+                } else {
+                    tweetChanged.setRetweeted(true);
+                    tweetChanged.setRetweetCount(tweetChanged.getRetweetCount()+1);
+
+                    binding.tvRetweets.setText(FormatUtil.buildSpan(FormatUtil.format(tweetChanged.getRetweetCount()), RETWEEETS));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        binding.btnRetweetDetail.setBackground(getDrawable(R.drawable.retweet_selected));
+                    }
+                    client.retweet(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            Tweet newTweet = new Tweet(jsonObject);
+                            newTweet.save();
+                            tweet = newTweet;
+                            retweetedStatus = tweet.getRetweetedStatus();
+                            populateViews();
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error Retweeting: " + errorResponse.toString());
+
+                        }
+                    });
+                }
+            }
+        });
+
+        binding.btnLikeDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tweet tweetChanged = tweet;
+                if (tweetChanged.getRetweetedStatus() != null) {
+                    tweetChanged = tweetChanged.getRetweetedStatus();
+                }
+
+                if (tweetChanged.isFavorited()) {
+                    tweetChanged.setFavorited(false);
+                    tweetChanged.setFavoriteCount(tweetChanged.getFavoriteCount()-1);
+
+                    binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(tweetChanged.getFavoriteCount()), LIKES));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        binding.btnLikeDetail.setBackground(getDrawable(R.drawable.like_default));
+                    }
+
+                    final Tweet modifiedTweet = tweetChanged;
+                    client.unfavorite(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            Tweet newTweet = new Tweet(jsonObject);
+                            modifiedTweet.setFavoriteCount(newTweet.getFavoriteCount());
+                            binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(modifiedTweet.getFavoriteCount()), LIKES));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error UnFavoriting: " + errorResponse.toString());
+
+                        }
+                    });
+                } else {
+                    tweetChanged.setFavorited(true);
+                    tweetChanged.setFavoriteCount(tweetChanged.getFavoriteCount()+1);
+
+                    binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(tweetChanged.getFavoriteCount()), LIKES));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        binding.btnLikeDetail.setBackground(getDrawable(R.drawable.like_selected));
+                    }
+
+                    final Tweet modifiedTweet = tweetChanged;
+                    client.favorite(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            Tweet newTweet = new Tweet(jsonObject);
+                            modifiedTweet.setFavoriteCount(newTweet.getFavoriteCount());
+                            binding.tvLikes.setText(FormatUtil.buildSpan(FormatUtil.format(modifiedTweet.getFavoriteCount()), LIKES));
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error Favoriting: " + errorResponse.toString());
+
+                        }
+                    });
+                }
+            }
+        });
+
 
         binding.etReply.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,6 +333,9 @@ public class TweetDetailActivity extends ComposeActivity {
                 origUserName = Constants.YOU;
             }
             binding.tvOrigUserNameDetail.setText(String.format("%s Retweeted", origUserName));
+        } else {
+            binding.ivRetweetStatusDetail.setVisibility(View.GONE);
+            binding.tvOrigUserNameDetail.setVisibility(View.GONE);
         }
 
         binding.tvDetailUserName.setText(tweetDetail.getUser().getName());
@@ -311,6 +432,11 @@ public class TweetDetailActivity extends ComposeActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
+                Intent intent = new Intent();
+                // Pass updated tweet back as a result
+                intent.putExtra("tweet", Parcels.wrap(tweet));
+                // Activity finished ok, return the data
+                setResult(RESULT_OK, intent); // set result
                 this.finish();
                 return true;
             default:

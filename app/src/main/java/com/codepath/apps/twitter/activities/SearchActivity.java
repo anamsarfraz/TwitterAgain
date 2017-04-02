@@ -19,6 +19,7 @@ import com.codepath.apps.twitter.databinding.ActivitySearchBinding;
 import com.codepath.apps.twitter.fragments.TrendsFragment;
 import com.codepath.apps.twitter.fragments.TweetSearchFragment;
 import com.codepath.apps.twitter.fragments.UserHeaderFragment;
+import com.codepath.apps.twitter.fragments.UserTimelineFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
 import com.codepath.apps.twitter.util.Constants;
@@ -37,8 +38,10 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
 
     ActivitySearchBinding binding;
     TrendsFragment trendsFragment;
+    TweetSearchFragment tweetSearchFragment;
     SearchView searchView;
     EditText et;
+    private final int REQUEST_CODE = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +125,7 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
 
     public void performSearch(String query) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        TweetSearchFragment tweetSearchFragment = TweetSearchFragment.newInstance(query);
+        tweetSearchFragment = TweetSearchFragment.newInstance(query);
         ft.replace(R.id.flSearch, tweetSearchFragment);
         ft.commit();
 
@@ -147,7 +150,7 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
 
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-        startActivity(intent, animationBundle);
+        startActivityForResult(intent, REQUEST_CODE, animationBundle);
     }
 
     @Override
@@ -177,6 +180,20 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
 
         Bundle animationBundle =
                 ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-        startActivity(intent, animationBundle);
+        startActivityForResult(intent, REQUEST_CODE, animationBundle);
+    }
+
+    @Override
+    public void onMessageClick(Tweet tweet) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            Tweet tweet = Parcels.unwrap(data.getParcelableExtra("tweet"));
+            tweetSearchFragment.changeItem(tweet);
+        }
     }
 }

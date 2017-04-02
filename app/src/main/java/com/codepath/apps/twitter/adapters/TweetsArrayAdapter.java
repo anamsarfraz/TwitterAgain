@@ -66,6 +66,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 
+import static com.codepath.apps.twitter.R.id.ivProfileImage;
+
 
 public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.ViewHolder> {
 
@@ -83,6 +85,9 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         void onImageClick(View imageView, int position);
         void onTextClick(String text, boolean isSearch);
         void onReplyClick(View replyBtn, int position);
+        void onRetweetClick(View retweetBtn, int position);
+        void onLikeClick(View likeBtn, int position);
+        void onMessageClick(View messageBtn, int position);
     }
     // Define the method that allows the parent activity or fragment to define the listener
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -104,6 +109,7 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
         @BindView(R.id.btnRetweet) Button btnRetweet;
         @BindView(R.id.tvLike) TextView tvLike;
         @BindView(R.id.btnLike) Button btnLike;
+        @BindView(R.id.btnMessage) Button btnMessage;
 
         public ViewHolder(final View itemView) {
             // Stores the itemView in a public final member variable that can be used
@@ -146,6 +152,42 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
                             listener.onReplyClick(itemView, position);
+                        }
+                    }
+                }
+            });
+
+            btnRetweet.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onRetweetClick(itemView, position);
+                        }
+                    }
+                }
+            });
+
+            btnLike.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onLikeClick(itemView, position);
+                        }
+                    }
+                }
+            });
+
+            btnMessage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION) {
+                            listener.onMessageClick(itemView, position);
                         }
                     }
                 }
@@ -254,11 +296,19 @@ public class TweetsArrayAdapter extends RecyclerView.Adapter<TweetsArrayAdapter.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.btnRetweet.setBackground(mContext.getDrawable(R.drawable.retweet_selected));
             }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.btnRetweet.setBackground(mContext.getDrawable(R.drawable.retweet_default));
+            }
         }
         holder.tvLike.setText(FormatUtil.format(tweet.getFavoriteCount()));
         if (tweet.isFavorited()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 holder.btnLike.setBackground(mContext.getDrawable(R.drawable.like_selected));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                holder.btnLike.setBackground(mContext.getDrawable(R.drawable.like_default));
             }
         }
 

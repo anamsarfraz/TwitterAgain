@@ -45,6 +45,7 @@ public abstract class TweetsListFragment extends Fragment {
     List<Tweet> tweets;
     long currMaxId;
     int retryCount;
+    int currPosition;
     TweetsArrayAdapter tweetsArrayAdapter;
     LinearLayoutManager linearLayoutManager;
     private FragmentTweetsListBinding binding;
@@ -121,11 +122,13 @@ public abstract class TweetsListFragment extends Fragment {
         tweetsArrayAdapter.setOnItemClickListener(new TweetsArrayAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
+                currPosition = position;
                 tweetClickListener.onItemClick(tweets.get(position));
             }
 
             @Override
             public void onImageClick(View imageView, int position) {
+                currPosition = position;
                 tweetClickListener.onViewClick(tweets.get(position).getUser());
             }
 
@@ -151,7 +154,112 @@ public abstract class TweetsListFragment extends Fragment {
 
             @Override
             public void onReplyClick(View replyBtn, int position) {
+                currPosition = position;
                 tweetClickListener.onReplyClick(tweets.get(position));
+            }
+
+            @Override
+            public void onRetweetClick(View retweetBtn, final int position) {
+                currPosition = position;
+                Tweet tweetChanged = tweets.get(position);
+                if (tweetChanged.getRetweetedStatus() != null) {
+                    tweetChanged = tweetChanged.getRetweetedStatus();
+                }
+
+                if (tweetChanged.isRetweeted()) {
+                    tweetChanged.setRetweeted(false);
+                    tweetChanged.setRetweetCount(tweetChanged.getRetweetCount()-1);
+
+                    final Tweet modifiedTweet = tweetChanged;
+                    tweetsArrayAdapter.notifyItemChanged(position);
+                    client.unretweet(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            tweets.get(position).delete();
+                            tweets.set(position, modifiedTweet);
+                            Log.d(DEBUG, jsonObject.toString());
+                            tweetsArrayAdapter.notifyItemChanged(position);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error UnRetweeting: " + errorResponse.toString());
+
+                        }
+                    });
+                } else {
+                    tweetChanged.setRetweeted(true);
+                    tweetChanged.setRetweetCount(tweetChanged.getRetweetCount()+1);
+                    tweetsArrayAdapter.notifyItemChanged(position);
+                    client.retweet(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            Tweet newTweet = new Tweet(jsonObject);
+                            newTweet.save();
+                            tweets.set(position, newTweet);
+                            Log.d(DEBUG, jsonObject.toString());
+                            tweetsArrayAdapter.notifyItemChanged(position);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error Retweeting: " + errorResponse.toString());
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onLikeClick(View likeBtn, final int position) {
+                currPosition = position;
+                Tweet tweetChanged = tweets.get(position);
+                if (tweetChanged.getRetweetedStatus() != null) {
+                    tweetChanged = tweetChanged.getRetweetedStatus();
+                }
+
+                if (tweetChanged.isFavorited()) {
+                    tweetChanged.setFavorited(false);
+                    tweetChanged.setFavoriteCount(tweetChanged.getFavoriteCount()-1);
+                    tweetsArrayAdapter.notifyItemChanged(position);
+                    final Tweet modifiedTweet = tweetChanged;
+                    client.unfavorite(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            Tweet newTweet = new Tweet(jsonObject);
+                            modifiedTweet.setFavoriteCount(newTweet.getFavoriteCount());
+                            Log.d(DEBUG, jsonObject.toString());
+                            tweetsArrayAdapter.notifyItemChanged(position);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error UnFavoriting: " + errorResponse.toString());
+
+                        }
+                    });
+                } else {
+                    tweetChanged.setFavorited(true);
+                    tweetChanged.setFavoriteCount(tweetChanged.getFavoriteCount()+1);
+                    tweetsArrayAdapter.notifyItemChanged(position);
+                    final Tweet modifiedTweet = tweetChanged;
+                    client.favorite(tweetChanged.getIdStr(), new JsonHttpResponseHandler() {
+                        public void onSuccess(int statusCode, Header[] headers, JSONObject jsonObject) {
+                            Tweet newTweet = new Tweet(jsonObject);
+                            modifiedTweet.setFavoriteCount(newTweet.getFavoriteCount());
+                            Log.d(DEBUG, jsonObject.toString());
+                            tweetsArrayAdapter.notifyItemChanged(position);
+                        }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            Log.e(ERROR, "Error Favoriting: " + errorResponse.toString());
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onMessageClick(View messageBtn, int position) {
+                currPosition = position;
             }
         });
     }
@@ -166,6 +274,11 @@ public abstract class TweetsListFragment extends Fragment {
     public void addItem(Tweet tweet) {
         tweets.add(0, tweet);
         tweetsArrayAdapter.notifyItemInserted(0);
+    }
+
+    public void changeItem(Tweet tweet) {
+        tweets.set(currPosition, tweet);
+        tweetsArrayAdapter.notifyItemChanged(currPosition);
     }
 
     public void addAll(List<Tweet> newTweets) {
