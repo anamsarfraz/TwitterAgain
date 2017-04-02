@@ -35,8 +35,7 @@
         android:ellipsize="end"
         android:maxWidth="@dimen/width200"
         android:textColor="@color/twitter_grey_dark"
-        android:drawableEnd="@drawable/dot_divider"
-        android:drawablePadding="@dimen/margin4"/>
+        />
     <TextView
         android:id="@+id/tvCreatedTimeMessage"
         android:layout_width="wrap_content"

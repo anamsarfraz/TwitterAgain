@@ -12,6 +12,7 @@ import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.ProfilePagerAdapter;
 import com.codepath.apps.twitter.adapters.TweetsPagerAdapter;
 import com.codepath.apps.twitter.databinding.ActivityProfileBinding;
+import com.codepath.apps.twitter.fragments.FollowFragment;
 import com.codepath.apps.twitter.fragments.HomeTimelineFragment;
 import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.fragments.UserHeaderFragment;
@@ -26,10 +27,11 @@ import com.codepath.apps.twitter.util.TwitterClient;
 import org.parceler.Parcels;
 
 import static com.codepath.apps.twitter.R.id.pstsToolbar;
+import static com.codepath.apps.twitter.R.string.tweet;
 import static com.codepath.apps.twitter.models.User.getCurrentUser;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
 
-public class ProfileActivity extends ComposeActivity implements OnTweetClickListener {
+public class ProfileActivity extends ComposeActivity implements OnTweetClickListener, UserHeaderFragment.OnFollowListener {
 
     ActivityProfileBinding binding;
     ProfilePagerAdapter adapterViewPager;
@@ -147,5 +149,16 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
         UserTimelineFragment userFrag = (UserTimelineFragment) adapterViewPager.getRegisteredFragment(0);
         userFrag.addItem(tweet);
         userFrag.postTweet();
+    }
+
+    @Override
+    public void getFollow(boolean isFollowers) {
+        Intent intent = new Intent(getApplicationContext(), FollowActivity.class);
+        intent.putExtra("get_followers", isFollowers);
+        intent.putExtra("screen_name", user.getScreenName());
+        Bundle animationBundle =
+                ActivityOptions.makeCustomAnimation(getContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+        startActivity(intent, animationBundle);
+
     }
 }

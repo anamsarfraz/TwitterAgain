@@ -6,15 +6,15 @@
         android:id="@+id/mainTimelineContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.codepath.apps.twitter.activities.SearchActivity">
+        tools:context="com.codepath.apps.twitter.activities.FollowActivity">
         <android.support.design.widget.AppBarLayout
-            android:id="@+id/abSearch"
+            android:id="@+id/abFollow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/tbSearch"
+                android:id="@+id/tbFollow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
@@ -22,10 +22,11 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
         <FrameLayout
-            android:id="@+id/flSearch"
+            android:id="@+id/flFollow"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
         </FrameLayout>
     </android.support.design.widget.CoordinatorLayout>
 </layout>
+

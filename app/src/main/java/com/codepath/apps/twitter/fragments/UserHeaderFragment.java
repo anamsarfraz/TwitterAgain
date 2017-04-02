@@ -36,6 +36,7 @@ public class UserHeaderFragment extends Fragment {
     private String FOLLOWERS = "FOLLOWERS";
     private String FOLLOWING = "FOLLOWING";
     private OnTweetClickListener tweetClickListener;
+    private OnFollowListener onFollowListener;
     TwitterClient client;
 
     @Override
@@ -53,6 +54,7 @@ public class UserHeaderFragment extends Fragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_user_header, container, false);
 
         tweetClickListener = (OnTweetClickListener) getActivity();
+        onFollowListener = (OnFollowListener) getActivity();
         return binding.getRoot();
     }
 
@@ -113,6 +115,24 @@ public class UserHeaderFragment extends Fragment {
                         }).into(binding.tvUserDescription);
         binding.tvFollowers.setText(FormatUtil.buildSpan(FormatUtil.format(user.getFollowersCount()), FOLLOWERS));
         binding.tvFollowing.setText(FormatUtil.buildSpan(FormatUtil.format(user.getFollowingCount()), FOLLOWING));
+
+        binding.tvFollowers.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFollowListener.getFollow(true);
+            }
+        });
+
+        binding.tvFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onFollowListener.getFollow(false);
+            }
+        });
+    }
+
+    public interface OnFollowListener {
+        public void getFollow(boolean isFollowers);
     }
 }
 

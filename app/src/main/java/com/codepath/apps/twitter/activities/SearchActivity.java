@@ -46,7 +46,6 @@ public class SearchActivity extends AppCompatActivity implements TrendsFragment.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_search);
 

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp"
+    android:gravity="start">
+
+    <ImageView
+        android:id="@+id/ivProfileImageFollow"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentStart="true"
+        android:layout_marginEnd="@dimen/margin8"
+        app:srcCompat="@drawable/ic_launcher" />
+    <TextView
+        android:id="@+id/tvUserNameFollow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/ivProfileImageFollow"
+        android:layout_toEndOf="@+id/ivProfileImageFollow"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        tools:text="CNN" />
+    <TextView
+        android:id="@+id/tvScreenNameFollow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="\@CNN"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:maxWidth="@dimen/width200"
+        android:textColor="@color/twitter_grey_dark"
+        android:layout_alignStart="@id/tvUserNameFollow"
+        android:layout_below="@id/tvUserNameFollow" />
+    <ImageView
+        android:id="@+id/ivFollow"
+        android:layout_width="48dp"
+        android:layout_height="32dp"
+        app:srcCompat="@drawable/ic_follow"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+    <TextView
+        android:id="@+id/tvTaglineFollow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@id/tvUserNameFollow"
+        android:layout_below="@id/tvScreenNameFollow"
+        tools:text="test test test test"
+        android:layout_marginTop="@dimen/margin4"
+        />
+
+</RelativeLayout>
