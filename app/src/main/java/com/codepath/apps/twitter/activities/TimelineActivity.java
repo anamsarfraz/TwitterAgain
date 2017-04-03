@@ -4,12 +4,18 @@ import android.app.ActivityOptions;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -20,6 +26,7 @@ import com.codepath.apps.twitter.fragments.MessagesFragment;
 import com.codepath.apps.twitter.fragments.TweetsListFragment;
 import com.codepath.apps.twitter.models.Tweet;
 import com.codepath.apps.twitter.models.User;
+import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.OnTweetClickListener;
 import com.codepath.apps.twitter.util.TwitterApplication;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -42,6 +49,7 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
     private final int SEARCH_CODE = 30;
     TweetsPagerAdapter adapterViewPager;
     ActivityTimelineBinding binding;
+
     User user;
 
     @Override
@@ -51,11 +59,16 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_timeline);
 
-        loadUserProfileImage();
+        loadUserProfileImage(binding.tbViews.ivUserImageTimeline);
         setTabViewPager();
         setToolbarScroll();
         setUpClickListeners();
         processSendIntent();
+
+        // Setup drawer view
+        setupDrawerContent();
+
+
     }
 
     private void setTabViewPager() {
@@ -110,15 +123,13 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
         });
     }
 
-    private void loadUserProfileImage() {
-
-        ImageView imgView = binding.tbViews.ivUserImageTimeline;
+    private void loadUserProfileImage(ImageView profileImgView) {
         Glide.with(this)
                 .load(User.getCurrentUser().getProfileImageUrl())
                 .bitmapTransform(new CropCircleTransformation(this))
                 .placeholder(R.drawable.tweet_social)
                 .crossFade()
-                .into(imgView);
+                .into(profileImgView);
     }
 
     private void processSendIntent() {
@@ -168,11 +179,21 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
         binding.tbViews.ivUserImageTimeline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(TimelineActivity.this, ProfileActivity.class);
-                intent.putExtra("user", Parcels.wrap(User.getCurrentUser()));
-                Bundle animationBundle =
-                        ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
-                startActivity(intent, animationBundle);
+                binding.drawerLayout.openDrawer(GravityCompat.START);
+                ImageView profileBannerView = (ImageView) binding.nvView.findViewById(R.id.ivNavHeader);
+                if (User.getCurrentUser().getProfileBannerUrl() != null) {
+                    Glide.with(getApplicationContext())
+                            .load(User.getCurrentUser().getProfileBannerUrl())
+                            .placeholder(R.drawable.tweet_social)
+                            .crossFade()
+                            .into(profileBannerView);
+                }
+                loadUserProfileImage((ImageView) binding.nvView.findViewById(R.id.ivNavProfile));
+                TextView tvNavUserName = (TextView) binding.nvView.findViewById(R.id.tvNavUsername);
+                TextView tvNavScreenName = (TextView) binding.nvView.findViewById(R.id.tvNavScreenName);
+                tvNavUserName.setText(User.getCurrentUser().getName());
+                tvNavScreenName.setText(
+                        String.format("%s%s", Constants.ATRATE, User.getCurrentUser().getScreenName()));
 
             }
         });
@@ -189,13 +210,56 @@ public class TimelineActivity extends ComposeActivity implements OnTweetClickLis
         });
 
     }
+
+    private void setupDrawerContent() {
+        binding.nvView.setNavigationItemSelectedListener(
+                new NavigationView.OnNavigationItemSelectedListener() {
+                    @Override
+                    public boolean onNavigationItemSelected(MenuItem menuItem) {
+                        selectDrawerItem(menuItem);
+                        return true;
+                    }
+                });
+    }
+
+    public void selectDrawerItem(MenuItem menuItem) {
+        // select drawer item and perform action
+        int postion = 0;
+        switch(menuItem.getItemId()) {
+            case R.id.profile:
+                postion = 1;
+                break;
+            case R.id.logout:
+                postion = 2;
+                break;
+            default:
+                break;
+        }
+
+
+        // Highlight the selected item has been done by NavigationView
+        menuItem.setChecked(true);
+        if (postion == 1) {
+            Intent intent = new Intent(TimelineActivity.this, ProfileActivity.class);
+            intent.putExtra("user", Parcels.wrap(User.getCurrentUser()));
+            Bundle animationBundle =
+                    ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_from_left,R.anim.slide_to_left).toBundle();
+            startActivity(intent, animationBundle);
+        } else if (postion == 2) {
+            logout();
+        }
+        menuItem.setChecked(false);
+
+        // Close the navigation drawer
+        binding.drawerLayout.closeDrawers();
+    }
+
     public void logout() {
 
         TwitterApplication.getRestClient().clearAccessToken();
         Intent intent = new Intent(TimelineActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
-
     }
 
     @Override
