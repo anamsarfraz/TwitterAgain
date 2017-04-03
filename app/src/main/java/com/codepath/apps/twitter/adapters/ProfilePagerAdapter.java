@@ -3,7 +3,9 @@ package com.codepath.apps.twitter.adapters;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.codepath.apps.twitter.fragments.FavoritesFragment;
 import com.codepath.apps.twitter.fragments.MentionsTimelineFragment;
+import com.codepath.apps.twitter.fragments.UserPhotosFragment;
 import com.codepath.apps.twitter.fragments.UserTimelineFragment;
 import com.codepath.apps.twitter.models.User;
 
@@ -12,8 +14,8 @@ import com.codepath.apps.twitter.models.User;
 public class ProfilePagerAdapter extends SmartFragmentStatePagerAdapter {
     final String TWEETS = "Tweets";
     final String FAVORITES = "Favorites";
-    final String MEDIA = "Media";
-    private String tabTitles [] = {TWEETS, FAVORITES, MEDIA};
+    final String PHOTOS = "Photos";
+    private String tabTitles [] = {TWEETS, FAVORITES, PHOTOS};
     User user;
 
     // Adapter gets the manager insert or remove from the activity
@@ -27,10 +29,10 @@ public class ProfilePagerAdapter extends SmartFragmentStatePagerAdapter {
     public Fragment getItem(int position) {
         if (position == 0) {
             return UserTimelineFragment.newInstance(user.getScreenName());
-        } else if (position < 3) {
-            return new MentionsTimelineFragment();
+        } else if (position == 1) {
+            return FavoritesFragment.newInstance(user.getScreenName());
         } else {
-            return null;
+            return UserPhotosFragment.newInstance(user.getScreenName());
         }
     }
 

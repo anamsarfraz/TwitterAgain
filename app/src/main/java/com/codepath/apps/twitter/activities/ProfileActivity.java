@@ -3,15 +3,20 @@ package com.codepath.apps.twitter.activities;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.adapters.ProfilePagerAdapter;
@@ -35,6 +40,7 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
 import static com.codepath.apps.twitter.R.id.ivUserBannerProfile;
 import static com.codepath.apps.twitter.R.id.pstsToolbar;
+import static com.codepath.apps.twitter.R.id.rlUserProfile;
 import static com.codepath.apps.twitter.R.string.tweet;
 import static com.codepath.apps.twitter.models.User.getCurrentUser;
 import static com.raizlabs.android.dbflow.config.FlowManager.getContext;
@@ -127,7 +133,6 @@ public class ProfileActivity extends ComposeActivity implements OnTweetClickList
         // Find the sliding tabstrip
         // Attach the tab strip to the view pager
         binding.rlUserProfile.pstsProfile.setViewPager(binding.rlUserProfile.vpUserProfile);
-
     }
 
     @Override
