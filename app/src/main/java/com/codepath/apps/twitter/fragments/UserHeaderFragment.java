@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 import com.codepath.apps.twitter.R;
 import com.codepath.apps.twitter.databinding.FragmentUserHeaderBinding;
 import com.codepath.apps.twitter.models.User;
+import com.codepath.apps.twitter.util.Constants;
 import com.codepath.apps.twitter.util.FormatUtil;
 import com.codepath.apps.twitter.util.OnTweetClickListener;
 import com.codepath.apps.twitter.util.PatternEditableBuilder;
@@ -84,7 +85,7 @@ public class UserHeaderFragment extends Fragment {
                 .crossFade()
                 .into(binding.ivUserProfile);
         binding.tvUserNameProfile.setText(user.getName());
-        binding.tvScreenNameProfile.setText(user.getScreenName());
+        binding.tvScreenNameProfile.setText(String.format("%s%s", Constants.ATRATE, user.getScreenName()));
         binding.tvUserDescription.setText(user.getTagLine());
         new PatternEditableBuilder().
                 addPattern(Pattern.compile("\\@(\\w+)"),
